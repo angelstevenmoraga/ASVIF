@@ -11,9 +11,13 @@
 <body class="pagina-protegida" data-protegida="true">
     <header>
         <div class="header-izquierda"><a href="../index.html" class="marca"><img src="../assets/img/asvif123_Letras_Logo.png" alt="Logotipo de ASVIF"></a><a class="volver-inicio" href="../index.html" data-volver><i class="fa-solid fa-arrow-left"></i><span>Volver</span></a></div>
+        <button class="sidebar-toggle" type="button" aria-expanded="false" aria-controls="panel-navegacion"><i class="fa-solid fa-bars"></i><span>Menú</span></button>
+        <span class="barra-usuario"><i class="fa-solid fa-circle-user"></i><span>Mi panel financiero</span></span>
     </header>
-    <aside class="panel-lateral" aria-label="Panel de navegación">
+    <aside id="panel-navegacion" class="panel-lateral sidebar" aria-label="Panel de navegación">
         <div class="panel-marca"><img src="../assets/img/asvif_Logotipo.png" alt=""><strong>ASVIF</strong><small>Tu guía financiera</small></div>
+        <span class="panel-etiqueta">Panel de control</span>
+        <a href="../index.html"><i class="fa-solid fa-house"></i>Inicio</a>
         <span class="panel-etiqueta">Herramientas</span>
         <a class="activo" href="ingresos-gastos.html"><i class="fa-solid fa-chart-pie"></i>Ingresos y gastos</a>
         <a href="ahorro.html"><i class="fa-solid fa-piggy-bank"></i>Plan de ahorro</a>
@@ -22,7 +26,7 @@
         <button type="button" class="panel-salir" data-cerrar-sesion><i class="fa-solid fa-right-from-bracket"></i>Cerrar sesión</button>
     </aside>
 
-    <main class="pagina-modulo">
+    <main class="pagina-modulo main-content">
         <section class="encabezado-modulo bloque-revelar">
             <div>
                 <span class="etiqueta">CONTROL FINANCIERO</span>

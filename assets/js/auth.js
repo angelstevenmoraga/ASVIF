@@ -86,11 +86,15 @@ function registrarUsuario(nombre, usuario, password) {
 
 function cerrarSesion() {
     sessionStorage.removeItem(ASVIF_AUTH_KEY);
-    window.location.href = window.location.pathname.includes("/pages/") ? "login.html" : "pages/login.html";
+    window.location.href = rutaLogin();
 }
 
 function haySesion() {
     return Boolean(obtenerSesion());
+}
+
+function rutaLogin() {
+    return window.location.pathname.includes("/pages/") ? "login.html" : "pages/login.html";
 }
 
 function obtenerDatosUsuario(clave, valorInicial) {
@@ -116,7 +120,7 @@ function guardarDatosUsuario(clave, datos) {
 
 document.addEventListener("DOMContentLoaded", () => {
     if (document.body.dataset.protegida === "true" && !haySesion()) {
-        window.location.replace("login.html");
+        window.location.replace(rutaLogin());
     }
 
     const sesion = obtenerSesion();
@@ -137,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
             acceso.setAttribute("tabindex", "0");
             acceso.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión';
         } else {
-            acceso.setAttribute("href", "pages/login.html");
+            acceso.setAttribute("href", rutaLogin());
             acceso.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión';
         }
     }
@@ -149,6 +153,38 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll("[data-cerrar-sesion]").forEach((boton) => {
         boton.addEventListener("click", cerrarSesion);
     });
+
+    const sidebarBoton = document.querySelector(".sidebar-toggle");
+    const sidebar = document.querySelector(".panel-lateral");
+    if (sidebarBoton && sidebar) {
+        const cambiarSidebar = (abierto) => {
+            sidebarBoton.setAttribute("aria-expanded", String(abierto));
+            sidebar.setAttribute("aria-hidden", String(!abierto));
+            sidebar.classList.toggle("abierto", abierto);
+            document.body.classList.toggle("sidebar-abierto", abierto);
+        };
+
+        sidebar.setAttribute("aria-hidden", "false");
+        sidebarBoton.addEventListener("click", () => {
+            cambiarSidebar(!sidebar.classList.contains("abierto"));
+        });
+
+        sidebar.querySelectorAll("a").forEach((enlace) => {
+            enlace.addEventListener("click", () => cambiarSidebar(false));
+        });
+
+        document.addEventListener("keydown", (evento) => {
+            if (evento.key === "Escape") cambiarSidebar(false);
+        });
+
+        document.addEventListener("click", (evento) => {
+            if (sidebar.classList.contains("abierto") &&
+                !sidebar.contains(evento.target) &&
+                !sidebarBoton.contains(evento.target)) {
+                cambiarSidebar(false);
+            }
+        });
+    }
 
     const menuBoton = document.querySelector(".menu-boton");
     const menu = document.querySelector("#menu-navegacion");

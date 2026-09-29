@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
+    if (typeof haySesion === "function" && haySesion()) {
+        window.location.replace("../index.html");
+        return;
+    }
+
     const tabLogin = document.getElementById("tab-login");
     const tabRegistro = document.getElementById("tab-registro");
     const formLogin = document.getElementById("form-login");
