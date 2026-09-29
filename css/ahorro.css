@@ -1,0 +1,17 @@
+@import url("index.css");
+
+main { max-width: 1120px; margin: 0 auto; padding: 44px 20px 70px; }
+.formulario { display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 16px; align-items: end; background: var(--blanco); border: 1px solid var(--borde); border-radius: 22px; padding: 26px; box-shadow: 0 12px 30px rgba(22,63,59,.08); }
+.formulario label { color: var(--texto); font-weight: 700; }
+.formulario input { display: block; width: 100%; margin-top: 8px; padding: 12px; border: 1px solid var(--borde); border-radius: 10px; font: inherit; }
+.formulario input:focus { outline: 3px solid rgba(47,117,104,.2); border-color: var(--verde); }
+.formulario button { white-space: nowrap; }
+.tabla-contenedor { overflow-x: auto; margin-top: 24px; background: var(--blanco); border: 1px solid var(--borde); border-radius: 22px; padding: 10px; box-shadow: 0 12px 30px rgba(22,63,59,.08); }
+table { width: 100%; min-width: 650px; border-collapse: collapse; text-align: right; }
+thead { background: var(--verde-profundo); color: var(--blanco); }
+th, td { padding: 15px; }
+th:first-child, td:first-child { text-align: center; }
+tbody td { border-bottom: 1px solid var(--borde); color: var(--texto-suave); }
+tbody tr:hover { background: var(--verde-claro); }
+@media (max-width: 760px) { .formulario { grid-template-columns: 1fr 1fr; } .formulario button { grid-column: 1 / -1; } }
+@media (max-width: 480px) { main { padding: 28px 16px 50px; } .formulario { grid-template-columns: 1fr; } }

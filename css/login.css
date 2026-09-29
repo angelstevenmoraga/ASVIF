@@ -1,0 +1,72 @@
+@import url("index.css");
+
+main.contenedor-auth {
+    min-height: calc(100vh - 82px);
+    max-width: 560px;
+    padding: 48px 20px;
+    margin: auto;
+}
+
+.tarjeta-auth {
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    padding: clamp(24px, 6vw, 44px);
+    border-radius: 28px;
+    box-shadow: 0 20px 55px rgba(22, 63, 59, .12);
+}
+
+.logo-auth { text-align: center; margin-bottom: 28px; }
+.logo-auth img { width: 82px; height: 82px; object-fit: contain; }
+.logo-auth h2 { color: var(--verde-profundo); font-size: 1.35rem; margin: 10px 0 0; }
+
+.pestanias {
+    display: flex;
+    gap: 8px;
+    padding: 5px;
+    background: var(--verde-claro);
+    border-radius: 999px;
+    margin-bottom: 24px;
+}
+
+.tab-btn {
+    flex: 1;
+    background: transparent;
+    color: var(--verde-profundo);
+    padding: 10px 5px;
+    box-shadow: none;
+}
+
+.tab-btn:hover { transform: none; box-shadow: none; background: rgba(255,255,255,.65); }
+.tab-btn.activo { background: var(--verde); color: var(--blanco); }
+
+.form-box { display: none; flex-direction: column; gap: 16px; }
+.form-box.activo { display: flex; }
+.campo { display: flex; flex-direction: column; gap: 7px; }
+.campo label { color: var(--texto); font-weight: 600; }
+.campo label i { color: var(--verde); margin-right: 5px; }
+
+.campo input {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    background: #fbfdfb;
+    color: var(--texto);
+    font-size: 1rem;
+}
+
+.campo input:focus { outline: 3px solid rgba(47, 117, 104, .2); border-color: var(--verde); }
+.btn-submit { width: 100%; margin-top: 8px; padding: 13px; }
+.btn-google {
+    width: 100%;
+    background: var(--blanco);
+    color: var(--texto);
+    border: 1px solid var(--borde);
+    box-shadow: none;
+}
+.btn-google:hover { background: #f5faf7; color: var(--texto); box-shadow: none; }
+.btn-google:disabled { opacity: .65; cursor: not-allowed; transform: none; }
+.btn-google i { color: #4285f4; margin-right: 6px; }
+.credenciales-demo { color: var(--texto-suave); font-size: .86rem; text-align: center; margin: 3px 0 0; }
+.credenciales-demo strong { color: var(--verde); }
+.mensaje-formulario { margin: 0; font-weight: 600; }

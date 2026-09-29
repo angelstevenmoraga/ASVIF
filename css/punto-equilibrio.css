@@ -1,0 +1,31 @@
+@import url("index.css");
+
+main { max-width: 1000px; margin: 0 auto; padding: 44px 20px 70px; }
+.introduccion { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 34px; margin-bottom: 24px; border-radius: 22px; background: var(--verde-profundo); color: var(--blanco); }
+.etiqueta { color: var(--dorado); font-size: .78rem; font-weight: 800; letter-spacing: .12em; }
+h2 { font-size: clamp(2rem, 5vw, 2.8rem); margin: 8px 0; }
+.introduccion p:last-child { color: #c7d9d1; line-height: 1.6; max-width: 570px; }
+.ilustracion { display: flex; align-items: center; justify-content: center; flex: 0 0 125px; height: 125px; border-radius: 50%; background: rgba(255,255,255,.1); color: var(--dorado); font-size: 2rem; }
+.contenido { display: grid; grid-template-columns: 1.15fr .85fr; gap: 20px; }
+.tarjeta-calculadora, .resultado { padding: 28px; border: 1px solid var(--borde); border-radius: 22px; background: var(--blanco); box-shadow: 0 12px 30px rgba(22,63,59,.08); }
+.tarjeta-calculadora h3, .ayuda h3 { color: var(--verde-profundo); margin-top: 0; }
+form { display: grid; gap: 10px; }
+label { color: var(--texto); font-weight: 700; }
+.campo-moneda { display: flex; align-items: center; margin-bottom: 12px; padding-left: 13px; border: 1px solid var(--borde); border-radius: 10px; background: #fbfdfb; }
+.campo-moneda span { color: var(--verde); font-weight: 800; }
+input { width: 100%; padding: 13px; border: 0; border-radius: 10px; font: inherit; background: transparent; }
+input:focus { outline: 0; }
+.campo-moneda:focus-within { outline: 3px solid rgba(47,117,104,.2); border-color: var(--verde); }
+.ayuda { padding: 28px; border-radius: 22px; background: var(--verde-claro); color: var(--texto); }
+.ayuda .etiqueta { color: var(--verde); }
+.operacion { font-size: 1.05rem; line-height: 1.6; }
+.operacion strong { display: block; font-size: 1.75rem; }
+.ejemplo { padding: 14px; margin-top: 20px; border-radius: 12px; background: rgba(255,255,255,.65); }
+.ejemplo span { font-size: .78rem; font-weight: 800; text-transform: uppercase; }
+.ejemplo p { line-height: 1.55; }
+.nota { padding-top: 16px; border-top: 1px solid rgba(22,63,59,.15); font-size: .9rem; }
+.resultado { margin-top: 24px; text-align: center; }
+.formula { color: var(--texto-suave); }
+.cantidad { color: var(--verde); font-size: clamp(2rem, 8vw, 3.4rem); font-weight: 800; margin: 10px 0; }
+#mensajeResultado { color: var(--texto-suave); line-height: 1.55; max-width: 520px; margin: auto; }
+@media (max-width: 700px) { main { padding: 28px 16px 50px; } .contenido { grid-template-columns: 1fr; } .introduccion { padding: 26px; } .ilustracion { display: none; } }

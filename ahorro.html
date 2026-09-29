@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASVIF</title>
+    <link rel="stylesheet" href="css/ahorro.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body class="pagina-protegida" data-protegida="true">
+    <header>
+        <div class="header-izquierda"><a href="index.html" class="marca"><img src="img/asvif123_Letras_Logo.png" alt="Logotipo de ASVIF"></a><a class="volver-inicio" href="index.html" data-volver><i class="fa-solid fa-arrow-left"></i><span>Volver</span></a></div>
+    </header>
+    <aside class="panel-lateral" aria-label="Panel de navegación">
+        <div class="panel-marca"><img src="img/asvif_Logotipo.png" alt=""><strong>ASVIF</strong><small>Tu guía financiera</small></div>
+        <span class="panel-etiqueta">Herramientas</span>
+        <a href="ingresos-gastos.html"><i class="fa-solid fa-chart-pie"></i>Ingresos y gastos</a>
+        <a class="activo" href="ahorro.html"><i class="fa-solid fa-piggy-bank"></i>Plan de ahorro</a>
+        <a href="punto-equilibrio.html"><i class="fa-solid fa-scale-balanced"></i>Punto de equilibrio</a>
+        <div class="panel-espaciador"></div>
+        <button type="button" class="panel-salir" data-cerrar-sesion><i class="fa-solid fa-right-from-bracket"></i>Cerrar sesión</button>
+    </aside>
+
+    <main class="pagina-modulo">
+        <section class="encabezado-modulo bloque-revelar">
+            <div>
+                <span class="etiqueta">PROYECCIÓN</span>
+                <h2>Plan de ahorro</h2>
+                <p>Visualiza cómo puede crecer tu ahorro con aportes constantes e interés mensual.</p>
+            </div>
+            <span class="icono-modulo"><i class="fa-solid fa-seedling"></i></span>
+        </section>
+        <form class="formulario" id="formularioAhorro">
+            <label for="ahorro">Ahorro mensual: <input type="number" id="ahorro" min="0" step="0.01" required></label>
+            <label for="interes">Interés mensual: <input type="number" id="interes" min="0" step="0.01" required> <span>%</span></label>
+            <label for="tiempo">Tiempo (meses): <input type="number" id="tiempo" min="1" max="600" step="1" required></label>
+            <button type="submit">Calcular</button>
+        </form>
+
+        <section class="tabla-contenedor bloque-revelar">
+            <table id="tablaAhorro">
+                <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Compuesto</th>
+                        <th>Interés</th>
+                        <th>Mensualidad</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script src="js/ahorro.js"></script>
+    <script src="js/modulos.js"></script>
+</body>
+</html>

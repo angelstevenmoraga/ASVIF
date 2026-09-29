@@ -1,0 +1,193 @@
+const ASVIF_AUTH_KEY = "asvifSesion";
+const ASVIF_USERS_KEY = "asvifUsuarios";
+const ASVIF_DEFAULT_USER = {
+    usuario: "admin",
+    nombre: "Administrador",
+    password: "asvif123"
+};
+
+function obtenerUsuarios() {
+    const guardados = localStorage.getItem(ASVIF_USERS_KEY);
+
+    if (!guardados) {
+        localStorage.setItem(ASVIF_USERS_KEY, JSON.stringify([ASVIF_DEFAULT_USER]));
+        return [ASVIF_DEFAULT_USER];
+    }
+
+    try {
+        const usuarios = JSON.parse(guardados);
+        return Array.isArray(usuarios) ? usuarios : [ASVIF_DEFAULT_USER];
+    } catch (error) {
+        localStorage.setItem(ASVIF_USERS_KEY, JSON.stringify([ASVIF_DEFAULT_USER]));
+        return [ASVIF_DEFAULT_USER];
+    }
+}
+
+function guardarUsuarios(usuarios) {
+    localStorage.setItem(ASVIF_USERS_KEY, JSON.stringify(usuarios));
+}
+
+function obtenerSesion() {
+    const sesion = sessionStorage.getItem(ASVIF_AUTH_KEY);
+    if (!sesion) return null;
+
+    try {
+        return JSON.parse(sesion);
+    } catch (error) {
+        sessionStorage.removeItem(ASVIF_AUTH_KEY);
+        return null;
+    }
+}
+
+function iniciarSesion(usuario, password) {
+    const usuarioNormalizado = usuario.trim().toLowerCase();
+    const usuarioEncontrado = obtenerUsuarios().find((item) =>
+        typeof item.usuario === "string" &&
+        item.usuario.toLowerCase() === usuarioNormalizado &&
+        item.password === password
+    );
+
+    if (!usuarioEncontrado) {
+        return false;
+    }
+
+    sessionStorage.setItem(ASVIF_AUTH_KEY, JSON.stringify({
+        usuario: usuarioEncontrado.usuario,
+        nombre: usuarioEncontrado.nombre
+    }));
+    return true;
+}
+
+function registrarUsuario(nombre, usuario, password) {
+    const nombreLimpio = nombre.trim();
+    const usuarioLimpio = usuario.trim();
+    if (nombreLimpio.length < 2 || usuarioLimpio.length < 3 || password.length < 8) {
+        return { correcto: false, mensaje: "Completa los datos con valores válidos." };
+    }
+
+    const usuarios = obtenerUsuarios();
+    const existe = usuarios.some((item) =>
+        typeof item.usuario === "string" &&
+        item.usuario.toLowerCase() === usuarioLimpio.toLowerCase()
+    );
+
+    if (existe) {
+        return { correcto: false, mensaje: "Ese usuario ya existe." };
+    }
+
+    usuarios.push({
+        nombre: nombreLimpio,
+        usuario: usuarioLimpio,
+        password
+    });
+    guardarUsuarios(usuarios);
+    return { correcto: true };
+}
+
+function cerrarSesion() {
+    sessionStorage.removeItem(ASVIF_AUTH_KEY);
+    window.location.href = "login.html";
+}
+
+function haySesion() {
+    return Boolean(obtenerSesion());
+}
+
+function obtenerDatosUsuario(clave, valorInicial) {
+    const sesion = obtenerSesion();
+    if (!sesion) return valorInicial;
+
+    const guardado = localStorage.getItem(`asvif:${sesion.usuario}:${clave}`);
+    if (!guardado) return valorInicial;
+
+    try {
+        return JSON.parse(guardado);
+    } catch (error) {
+        localStorage.removeItem(`asvif:${sesion.usuario}:${clave}`);
+        return valorInicial;
+    }
+}
+
+function guardarDatosUsuario(clave, datos) {
+    const sesion = obtenerSesion();
+    if (!sesion) return;
+    localStorage.setItem(`asvif:${sesion.usuario}:${clave}`, JSON.stringify(datos));
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (document.body.dataset.protegida === "true" && !haySesion()) {
+        window.location.replace("login.html");
+    }
+
+    const sesion = obtenerSesion();
+    const menuUsuario = document.querySelector(".menu-usuario");
+    const acceso = document.querySelector("[data-acceso]");
+    const bienvenida = document.querySelector("[data-bienvenida]");
+
+    if (menuUsuario) {
+        menuUsuario.hidden = !sesion;
+    }
+
+    if (acceso) {
+        if (sesion) {
+            acceso.textContent = "Cerrar sesión";
+            acceso.removeAttribute("href");
+            acceso.setAttribute("data-cerrar-sesion", "");
+            acceso.setAttribute("role", "button");
+            acceso.setAttribute("tabindex", "0");
+            acceso.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión';
+        } else {
+            acceso.setAttribute("href", "login.html");
+            acceso.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión';
+        }
+    }
+
+    if (bienvenida && sesion) {
+        bienvenida.textContent = `Hola, ${sesion.nombre}. Organiza tus finanzas con claridad.`;
+    }
+
+    document.querySelectorAll("[data-cerrar-sesion]").forEach((boton) => {
+        boton.addEventListener("click", cerrarSesion);
+    });
+
+    const menuBoton = document.querySelector(".menu-boton");
+    const menu = document.querySelector("#menu-navegacion");
+    const menuFondo = document.querySelector(".menu-fondo");
+    const menuCerrar = document.querySelector(".menu-cerrar");
+    if (menuBoton && menu) {
+        const cambiarMenu = (abierto) => {
+            menuBoton.setAttribute("aria-expanded", String(abierto));
+            menu.setAttribute("aria-hidden", String(!abierto));
+            menu.classList.toggle("abierto", abierto);
+            menu.hidden = !abierto;
+            if (menuFondo) menuFondo.hidden = !abierto;
+            document.body.classList.toggle("menu-abierto", abierto);
+        };
+
+        menuBoton.addEventListener("click", (evento) => {
+            const abierto = menuBoton.getAttribute("aria-expanded") === "true";
+            cambiarMenu(!abierto);
+        });
+
+        if (menuFondo) menuFondo.addEventListener("click", () => cambiarMenu(false));
+        if (menuCerrar) menuCerrar.addEventListener("click", () => cambiarMenu(false));
+
+        document.addEventListener("click", (evento) => {
+            if (!menu.contains(evento.target) && !menuBoton.contains(evento.target) &&
+                (!menuFondo || !menuFondo.contains(evento.target))) {
+                cambiarMenu(false);
+            }
+        });
+
+        document.addEventListener("keydown", (evento) => {
+            if (evento.key === "Escape") {
+                cambiarMenu(false);
+                menuBoton.focus();
+            }
+        });
+
+        menu.querySelectorAll("a").forEach((enlace) => {
+            enlace.addEventListener("click", () => cambiarMenu(false));
+        });
+    }
+});

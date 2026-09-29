@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/login.css">
+    <title>Acceso y Registro - ASVIF</title>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="marca">
+            <img src="img/asvif123_Letras_Logo.png" alt="Logotipo de ASVIF">
+            <h1>ASVIF</h1>
+        </a>
+        <a href="index.html" class="btn-enlace"><i class="fa-solid fa-arrow-left"></i> Volver al Inicio</a>
+    </header>
+
+    <main class="contenedor-auth">
+        <div class="tarjeta-auth">
+            <div class="logo-auth">
+                <img src="img/asvif_Logotipo.png" alt="Logotipo de ASVIF">
+                <h2>Asistente Virtual Financiero</h2>
+            </div>
+
+            <!-- Navegación por pestañas -->
+            <div class="pestanias">
+                <button class="tab-btn activo" id="tab-login">Iniciar Sesión</button>
+                <button class="tab-btn" id="tab-registro">Crear Cuenta</button>
+            </div>
+
+            <!-- FORMULARIO DE LOGIN -->
+            <form id="form-login" class="form-box activo">
+                <div class="campo">
+                    <label for="login-usuario"><i class="fa-solid fa-user"></i> Usuario</label>
+                    <input type="text" id="login-usuario" placeholder="admin" autocomplete="username" required>
+                </div>
+
+                <div class="campo">
+                    <label for="login-password"><i class="fa-solid fa-lock"></i> Contraseña</label>
+                    <input type="password" id="login-password" placeholder="asvif123" autocomplete="current-password" required>
+                </div>
+
+                <button type="submit" class="btn-submit">Ingresar</button>
+                <button type="button" class="btn-google" id="btn-google" disabled title="Requiere configuración OAuth de Google">
+                    <i class="fa-brands fa-google"></i> Continuar con Google
+                </button>
+                <p class="credenciales-demo">
+                    Acceso rápido: <strong>admin</strong> / <strong>asvif123</strong>
+                </p>
+            </form>
+
+            <!-- FORMULARIO DE REGISTRO -->
+            <form id="form-registro" class="form-box">
+                <div class="campo">
+                    <label for="reg-nombre"><i class="fa-solid fa-user"></i> Nombre Completo</label>
+                    <input type="text" id="reg-nombre" placeholder="Tu Nombre" required>
+                </div>
+
+                <div class="campo">
+                    <label for="reg-usuario"><i class="fa-solid fa-user"></i> Usuario</label>
+                    <input type="text" id="reg-usuario" placeholder="usuario" autocomplete="username" required>
+                </div>
+
+                <div class="campo">
+                    <label for="reg-password"><i class="fa-solid fa-lock"></i> Contraseña</label>
+                    <input type="password" id="reg-password" placeholder="Mínimo 8 caracteres" minlength="8" autocomplete="new-password" required>
+                </div>
+
+                <div class="campo">
+                    <label for="reg-confirm-password"><i class="fa-solid fa-shield-halved"></i> Confirmar Contraseña</label>
+                    <input type="password" id="reg-confirm-password" placeholder="Repite tu contraseña" required>
+                </div>
+
+                <button type="submit" class="btn-submit">Registrarse</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="js/login.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

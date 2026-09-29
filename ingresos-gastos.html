@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASVIF</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/ingresos-gastos.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="pagina-protegida" data-protegida="true">
+    <header>
+        <div class="header-izquierda"><a href="index.html" class="marca"><img src="img/asvif123_Letras_Logo.png" alt="Logotipo de ASVIF"></a><a class="volver-inicio" href="index.html" data-volver><i class="fa-solid fa-arrow-left"></i><span>Volver</span></a></div>
+    </header>
+    <aside class="panel-lateral" aria-label="Panel de navegación">
+        <div class="panel-marca"><img src="img/asvif_Logotipo.png" alt=""><strong>ASVIF</strong><small>Tu guía financiera</small></div>
+        <span class="panel-etiqueta">Herramientas</span>
+        <a class="activo" href="ingresos-gastos.html"><i class="fa-solid fa-chart-pie"></i>Ingresos y gastos</a>
+        <a href="ahorro.html"><i class="fa-solid fa-piggy-bank"></i>Plan de ahorro</a>
+        <a href="punto-equilibrio.html"><i class="fa-solid fa-scale-balanced"></i>Punto de equilibrio</a>
+        <div class="panel-espaciador"></div>
+        <button type="button" class="panel-salir" data-cerrar-sesion><i class="fa-solid fa-right-from-bracket"></i>Cerrar sesión</button>
+    </aside>
+
+    <main class="pagina-modulo">
+        <section class="encabezado-modulo bloque-revelar">
+            <div>
+                <span class="etiqueta">CONTROL FINANCIERO</span>
+                <h2>Ingresos y gastos</h2>
+                <p>Conoce el movimiento de tu dinero y descubre cuánto puedes reservar cada mes.</p>
+            </div>
+            <span class="icono-modulo"><i class="fa-solid fa-chart-pie"></i></span>
+        </section>
+        <section class="contenedor">
+            <!-- Ingresos -->
+            <div class="bloque bloque-revelar">
+                <h2>Ingreso</h2>
+                <label for="ingreso-salario">Salario: <input id="ingreso-salario" type="number" class="ingreso" min="0" step="0.01"></label>
+                <label for="ingreso-acciones">Acciones: <input id="ingreso-acciones" type="number" class="ingreso" min="0" step="0.01"></label>
+                <label for="ingreso-otros">Otros: <input id="ingreso-otros" type="number" class="ingreso" min="0" step="0.01"></label>
+            </div>
+
+            <!-- Gastos -->
+            <div class="bloque bloque-revelar">
+                <h2>Gastos</h2>
+                <label for="gasto-alquiler">Renta/Alquiler: <input id="gasto-alquiler" type="number" class="gasto" min="0" step="0.01"></label>
+                <label for="gasto-alimento">Alimento: <input id="gasto-alimento" type="number" class="gasto" min="0" step="0.01"></label>
+                <label for="gasto-servicios">Servicios básicos: <input id="gasto-servicios" type="number" class="gasto" min="0" step="0.01"></label>
+                <label for="gasto-vehiculo">Vehículo: <input id="gasto-vehiculo" type="number" class="gasto" min="0" step="0.01"></label>
+                <label for="gasto-mantenimiento">Mantenimiento: <input id="gasto-mantenimiento" type="number" class="gasto" min="0" step="0.01"></label>
+                <label for="gasto-gasolina">Gasolina: <input id="gasto-gasolina" type="number" class="gasto" min="0" step="0.01"></label>
+                <label for="gasto-ocio">Ocio: <input id="gasto-ocio" type="number" class="gasto" min="0" step="0.01"></label>
+            </div>
+
+            <!-- Resumen y gráfico -->
+            <div class="bloque resumen bloque-revelar">
+                <h2>Resumen</h2>
+                <p><span class="color-ingreso"></span> Ingreso: C$ <span id="totalIngreso">0</span></p>
+                <p><span class="color-gasto"></span> Gasto: C$ <span id="totalGasto">0</span></p>
+                <p>Residuo mensual: C$ <span id="residuo">0</span></p>
+                <canvas id="grafico"></canvas>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script src="js/ingresos-gastos.js"></script>
+    <script src="js/modulos.js"></script>
+</body>
+</html>

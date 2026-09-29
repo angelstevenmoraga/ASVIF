@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punto de equilibrio | ASVIF</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/punto-equilibrio.css">
+</head>
+<body class="pagina-protegida" data-protegida="true">
+    <header>
+        <div class="header-izquierda"><a href="index.html" class="marca"><img src="img/asvif123_Letras_Logo.png" alt="Logotipo de ASVIF"></a><a class="volver-inicio" href="index.html" data-volver><i class="fa-solid fa-arrow-left"></i><span>Volver</span></a></div>
+    </header>
+    <aside class="panel-lateral" aria-label="Panel de navegación">
+        <div class="panel-marca"><img src="img/asvif_Logotipo.png" alt=""><strong>ASVIF</strong><small>Tu guía financiera</small></div>
+        <span class="panel-etiqueta">Herramientas</span>
+        <a href="ingresos-gastos.html"><i class="fa-solid fa-chart-pie"></i>Ingresos y gastos</a>
+        <a href="ahorro.html"><i class="fa-solid fa-piggy-bank"></i>Plan de ahorro</a>
+        <a class="activo" href="punto-equilibrio.html"><i class="fa-solid fa-scale-balanced"></i>Punto de equilibrio</a>
+        <div class="panel-espaciador"></div>
+        <button type="button" class="panel-salir" data-cerrar-sesion><i class="fa-solid fa-right-from-bracket"></i>Cerrar sesión</button>
+    </aside>
+
+    <main class="pagina-modulo">
+        <section class="introduccion bloque-revelar">
+            <div>
+                <p class="etiqueta">CALCULADORA</p>
+                <h2>Punto de equilibrio</h2>
+                <p>Descubre cuántos productos necesitas vender para recuperar tu inversión inicial.</p>
+            </div>
+            <div class="ilustracion" aria-hidden="true">
+                <span class="moneda">C$</span>
+                <span class="simbolo-division">÷</span>
+                <span class="caja">▣</span>
+            </div>
+        </section>
+
+        <div class="contenido">
+            <section class="tarjeta-calculadora bloque-revelar" aria-labelledby="titulo-formulario">
+                <h3 id="titulo-formulario">Ingresa los datos</h3>
+                <form id="formularioEquilibrio">
+                    <label for="costoProduccion">Costo total de producción</label>
+                    <div class="campo-moneda"><span>C$</span><input id="costoProduccion" type="number" min="0" step="0.01" placeholder="1,000.00" required></div>
+
+                    <label for="precioVenta">Precio de venta por producto</label>
+                    <div class="campo-moneda"><span>C$</span><input id="precioVenta" type="number" min="0.01" step="0.01" placeholder="20.00" required></div>
+
+                    <button type="submit">Calcular ahora <span>→</span></button>
+                </form>
+            </section>
+
+            <aside class="ayuda bloque-revelar">
+                <p class="etiqueta">¿CÓMO FUNCIONA?</p>
+                <h3>Una operación sencilla</h3>
+                <p class="operacion">Costo de producción <strong>÷</strong> precio de venta</p>
+                <div class="ejemplo">
+                    <span>Ejemplo</span>
+                    <p>C$1,000 ÷ C$20 = <b>50 productos</b></p>
+                </div>
+                <p class="nota">Desde la venta 51, comienzas a obtener ganancias.</p>
+            </aside>
+        </div>
+
+        <section id="resultado" class="resultado" aria-live="polite" hidden>
+            <p class="etiqueta">RESULTADO</p>
+            <p class="formula"><span id="costoMostrado">C$0.00</span> ÷ <span id="precioMostrado">C$0.00</span></p>
+            <p class="cantidad"><span id="cantidadProductos">0</span> productos</p>
+            <p id="mensajeResultado"></p>
+        </section>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script src="js/punto-equilibrio.js"></script>
+    <script src="js/modulos.js"></script>
+</body>
+</html>
