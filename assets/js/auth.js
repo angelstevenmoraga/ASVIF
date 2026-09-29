@@ -86,7 +86,7 @@ function registrarUsuario(nombre, usuario, password) {
 
 function cerrarSesion() {
     sessionStorage.removeItem(ASVIF_AUTH_KEY);
-    window.location.href = "login.html";
+    window.location.href = window.location.pathname.includes("/pages/") ? "login.html" : "pages/login.html";
 }
 
 function haySesion() {
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
             acceso.setAttribute("tabindex", "0");
             acceso.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión';
         } else {
-            acceso.setAttribute("href", "login.html");
+            acceso.setAttribute("href", "pages/login.html");
             acceso.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión';
         }
     }

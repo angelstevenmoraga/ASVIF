@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        window.location.href = "index.html";
+        window.location.href = "../index.html";
     });
 
     // Captura del envío del Registro
