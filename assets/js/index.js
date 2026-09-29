@@ -23,6 +23,20 @@ document.addEventListener("DOMContentLoaded", () => {
             void elemento.offsetWidth;
             elemento.classList.add("aviso-proximamente");
         });
+
+        const sesion = typeof obtenerSesion === "function" ? obtenerSesion() : null;
+        const bienvenida = document.querySelector("[data-bienvenida]");
+        if (sesion && bienvenida) {
+            const hora = new Date().getHours();
+            const saludo = hora < 12 ? "Buenos días" : hora < 19 ? "Buenas tardes" : "Buenas noches";
+            bienvenida.textContent = `${saludo}, ${sesion.nombre}.`;
+        }
+
+        document.querySelectorAll(".resumen-card, .panel-informativo a").forEach((enlace) => {
+            enlace.addEventListener("pointerdown", () => enlace.classList.add("interaccion-activa"));
+            enlace.addEventListener("pointerup", () => enlace.classList.remove("interaccion-activa"));
+            enlace.addEventListener("pointerleave", () => enlace.classList.remove("interaccion-activa"));
+        });
     });
 
     const enlaces = document.querySelectorAll(".menu-desplegable a[href]");

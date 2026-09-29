@@ -89,6 +89,43 @@ function cerrarSesion() {
     window.location.href = rutaLogin();
 }
 
+function mostrarConfirmacionCerrarSesion() {
+    let modal = document.querySelector("#modal-cerrar-sesion");
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "modal-cerrar-sesion";
+        modal.className = "modal-confirmacion";
+        modal.hidden = true;
+        modal.innerHTML = `
+            <div class="modal-confirmacion-contenido" role="dialog" aria-modal="true" aria-labelledby="titulo-cerrar-sesion">
+                <span class="modal-confirmacion-icono"><i class="fa-solid fa-right-from-bracket"></i></span>
+                <h2 id="titulo-cerrar-sesion">¿Cerrar sesión?</h2>
+                <p>Tu sesión se cerrará en este dispositivo. Podrás volver a ingresar cuando quieras.</p>
+                <div class="modal-confirmacion-acciones">
+                    <button type="button" class="modal-cancelar">Cancelar</button>
+                    <button type="button" class="modal-aceptar">Cerrar sesión</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        const cerrarModal = () => {
+            modal.hidden = true;
+            document.body.classList.remove("modal-abierto");
+        };
+        modal.querySelector(".modal-cancelar").addEventListener("click", cerrarModal);
+        modal.querySelector(".modal-aceptar").addEventListener("click", cerrarSesion);
+        modal.addEventListener("click", (evento) => {
+            if (evento.target === modal) cerrarModal();
+        });
+        modal._cerrar = cerrarModal;
+    }
+
+    modal.hidden = false;
+    document.body.classList.add("modal-abierto");
+    modal.querySelector(".modal-cancelar").focus();
+}
+
 function haySesion() {
     return Boolean(obtenerSesion());
 }
@@ -151,7 +188,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     document.querySelectorAll("[data-cerrar-sesion]").forEach((boton) => {
-        boton.addEventListener("click", cerrarSesion);
+        boton.addEventListener("click", mostrarConfirmacionCerrarSesion);
+    });
+
+    document.addEventListener("keydown", (evento) => {
+        const modal = document.querySelector("#modal-cerrar-sesion");
+        if (evento.key === "Escape" && modal && !modal.hidden) modal._cerrar();
     });
 
     const sidebarBoton = document.querySelector(".sidebar-toggle");
@@ -185,6 +227,15 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    const paginaActual = window.location.pathname.split("/").pop() || "index.html";
+    document.querySelectorAll(".panel-lateral a[href]").forEach((enlace) => {
+        const destino = enlace.getAttribute("href").split("/").pop();
+        if (destino === paginaActual) {
+            enlace.classList.add("activo");
+            enlace.setAttribute("aria-current", "page");
+        }
+    });
 
     const menuBoton = document.querySelector(".menu-boton");
     const menu = document.querySelector("#menu-navegacion");

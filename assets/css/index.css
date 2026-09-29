@@ -15,6 +15,44 @@
     --borde: #dce8e2;
 }
 
+.modal-confirmacion[hidden] { display: none; }
+.modal-confirmacion {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(16, 47, 42, .46);
+    backdrop-filter: blur(4px);
+}
+.modal-confirmacion-contenido {
+    position: relative;
+    width: min(410px, 100%);
+    padding: 34px 30px 28px;
+    border: 1px solid var(--borde);
+    border-radius: 22px;
+    background: var(--blanco);
+    color: var(--texto);
+    text-align: center;
+    box-shadow: 0 24px 60px rgba(23, 49, 45, .2);
+    animation: modal-aparecer .2s ease both;
+}
+.modal-confirmacion-icono { display: grid; place-items: center; width: 54px; height: 54px; margin: 0 auto 16px; border-radius: 16px; background: var(--verde-claro); color: var(--verde); font-size: 1.3rem; }
+.modal-confirmacion h2 { margin: 0 0 9px; color: var(--verde-profundo); font-size: 1.45rem; }
+.modal-confirmacion p { margin: 0 auto; max-width: 310px; color: var(--texto-suave); font-size: .9rem; line-height: 1.55; }
+.modal-confirmacion-acciones { display: flex; justify-content: center; gap: 10px; margin-top: 24px; }
+.modal-confirmacion-acciones button { min-width: 130px; }
+.modal-confirmacion .modal-cancelar { background: var(--salvia); color: var(--verde-profundo); box-shadow: none; }
+.modal-confirmacion .modal-cancelar:hover { background: var(--verde-claro); color: var(--verde-profundo); box-shadow: none; }
+.modal-confirmacion .modal-aceptar { background: var(--verde-profundo); }
+body.modal-abierto { overflow: hidden; }
+
+@keyframes modal-aparecer {
+    from { opacity: 0; transform: translateY(8px) scale(.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 * { box-sizing: border-box; }
 
 body {
@@ -337,6 +375,7 @@ button[disabled], .btn-enlace[aria-disabled="true"] {
 .resumen-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0; }
 .resumen-card { display: flex; align-items: center; gap: 13px; min-height: 132px; padding: 19px; border: 1px solid var(--borde); border-radius: 18px; background: rgba(255,255,255,.75); color: var(--texto); text-decoration: none; box-shadow: 0 8px 20px rgba(22,63,59,.05); transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
 .resumen-card:hover { transform: translateY(-4px); border-color: #acd5c6; box-shadow: 0 14px 26px rgba(22,63,59,.1); }
+.resumen-card.interaccion-activa { transform: scale(.985); }
 .resumen-card > span:nth-child(2) { display: grid; gap: 3px; }
 .resumen-card small { color: var(--texto-suave); font-size: .64rem; font-weight: 800; letter-spacing: .11em; }
 .resumen-card strong { font: 800 .98rem "Manrope", sans-serif; }
@@ -358,6 +397,9 @@ button[disabled], .btn-enlace[aria-disabled="true"] {
 .panel-informativo a strong { font-size: .88rem; }
 .panel-informativo a small { color: var(--texto-suave); font-size: .75rem; }
 .panel-informativo a:hover strong { color: var(--verde); }
+.panel-informativo a { transition: background .2s ease, padding-left .2s ease; }
+.panel-informativo a:hover { padding-left: 10px; background: rgba(221,239,233,.45); }
+.panel-informativo a.interaccion-activa { transform: scale(.99); }
 .panel-mensaje { background: linear-gradient(145deg, var(--arena), var(--menta)); }
 .mensaje-icono { display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 17px; border-radius: 14px; background: var(--dorado); color: var(--verde-profundo); }
 .panel-mensaje .etiqueta { margin: 0; }
@@ -366,6 +408,8 @@ button[disabled], .btn-enlace[aria-disabled="true"] {
 .mensaje-estado { display: block; margin-top: 20px; color: var(--verde); font-size: .76rem; font-weight: 700; }
 .mensaje-estado i { margin-right: 5px; }
 .pagina-protegida header { animation: none; }
+.pagina-dashboard { padding-top: 0; }
+.dashboard-topbar { display: none; }
 .pagina-protegida .bloque-revelar {
     opacity: 1;
     transform: none;
@@ -469,6 +513,54 @@ button[disabled], .btn-enlace[aria-disabled="true"] {
         background: rgba(17,49,45,.32);
         backdrop-filter: blur(2px);
     }
+
+    .modal-confirmacion[hidden] { display: none; }
+    .modal-confirmacion {
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        display: grid;
+        place-items: center;
+        padding: 20px;
+        background: rgba(16, 47, 42, .46);
+        backdrop-filter: blur(4px);
+    }
+    .modal-confirmacion-contenido {
+        position: relative;
+        width: min(410px, 100%);
+        padding: 34px 30px 28px;
+        border: 1px solid var(--borde);
+        border-radius: 22px;
+        background: var(--blanco);
+        color: var(--texto);
+        text-align: center;
+        box-shadow: 0 24px 60px rgba(23, 49, 45, .2);
+        animation: modal-aparecer .2s ease both;
+    }
+    .modal-confirmacion-icono {
+        display: grid;
+        place-items: center;
+        width: 54px;
+        height: 54px;
+        margin: 0 auto 16px;
+        border-radius: 16px;
+        background: var(--verde-claro);
+        color: var(--verde);
+        font-size: 1.3rem;
+    }
+    .modal-confirmacion h2 { margin: 0 0 9px; color: var(--verde-profundo); font-size: 1.45rem; }
+    .modal-confirmacion p { margin: 0 auto; max-width: 310px; color: var(--texto-suave); font-size: .9rem; line-height: 1.55; }
+    .modal-confirmacion-acciones { display: flex; justify-content: center; gap: 10px; margin-top: 24px; }
+    .modal-confirmacion-acciones button { min-width: 130px; }
+    .modal-confirmacion .modal-cancelar { background: var(--salvia); color: var(--verde-profundo); box-shadow: none; }
+    .modal-confirmacion .modal-cancelar:hover { background: var(--verde-claro); color: var(--verde-profundo); box-shadow: none; }
+    .modal-confirmacion .modal-aceptar { background: var(--verde-profundo); }
+    body.modal-abierto { overflow: hidden; }
+
+    @keyframes modal-aparecer {
+        from { opacity: 0; transform: translateY(8px) scale(.98); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
     .panel-marca, .panel-etiqueta, .panel-espaciador { display: flex; }
     .panel-marca { display: grid; }
     .panel-espaciador { flex: 1; }
@@ -477,6 +569,8 @@ button[disabled], .btn-enlace[aria-disabled="true"] {
     .panel-salir { border-top: 1px solid rgba(255,255,255,.18); border-left: 0; padding-top: 18px; }
     .dashboard-hero { padding: 30px; }
     .main-content { width: 100%; margin-left: 0; }
+    .pagina-dashboard { padding-top: 74px; }
+    .pagina-dashboard .dashboard-topbar { display: flex; }
     .dashboard-footer { grid-template-columns: repeat(2, 1fr); }
     .footer-brand { grid-column: 1 / -1; }
 }
