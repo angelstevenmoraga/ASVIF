@@ -199,6 +199,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const sidebarBoton = document.querySelector(".sidebar-toggle");
     const sidebar = document.querySelector(".panel-lateral");
     if (sidebarBoton && sidebar) {
+        const sidebarEstadoKey = "asvifSidebarExpandido";
+        const esEscritorio = () => window.matchMedia("(min-width: 901px)").matches;
         const cambiarSidebar = (abierto) => {
             sidebarBoton.setAttribute("aria-expanded", String(abierto));
             sidebar.setAttribute("aria-hidden", String(!abierto));
@@ -206,13 +208,28 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.classList.toggle("sidebar-abierto", abierto);
         };
 
+        if (esEscritorio() && sessionStorage.getItem(sidebarEstadoKey) === "true") {
+            document.body.classList.add("sidebar-mantenido");
+        }
+
         sidebar.setAttribute("aria-hidden", "false");
         sidebarBoton.addEventListener("click", () => {
             cambiarSidebar(!sidebar.classList.contains("abierto"));
         });
 
         sidebar.querySelectorAll("a").forEach((enlace) => {
-            enlace.addEventListener("click", () => cambiarSidebar(false));
+            enlace.addEventListener("click", () => {
+                if (esEscritorio()) sessionStorage.setItem(sidebarEstadoKey, "true");
+                cambiarSidebar(false);
+            });
+        });
+
+        document.addEventListener("mousemove", (evento) => {
+            if (!esEscritorio() || sessionStorage.getItem(sidebarEstadoKey) !== "true") return;
+            if (evento.clientX > 280 && !sidebar.matches(":hover")) {
+                sessionStorage.removeItem(sidebarEstadoKey);
+                document.body.classList.remove("sidebar-mantenido");
+            }
         });
 
         document.addEventListener("keydown", (evento) => {

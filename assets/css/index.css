@@ -734,19 +734,22 @@ footer {
         font-size: 1rem;
     }
     body.pagina-protegida .panel-lateral:hover,
-    body.pagina-protegida .panel-lateral:focus-within {
+    body.pagina-protegida .panel-lateral:focus-within,
+    body.pagina-protegida.sidebar-mantenido .panel-lateral {
         width: 280px;
         box-shadow: 10px 0 28px rgba(23,49,45,.18);
     }
     body.pagina-protegida .panel-lateral:hover .panel-marca,
-    body.pagina-protegida .panel-lateral:focus-within .panel-marca {
+    body.pagina-protegida .panel-lateral:focus-within .panel-marca,
+    body.pagina-protegida.sidebar-mantenido .panel-marca {
         grid-template-columns: 48px 1fr;
         justify-items: initial;
         column-gap: 10px;
         padding: 5px 8px 30px;
     }
     body.pagina-protegida .panel-lateral:hover .panel-marca img,
-    body.pagina-protegida .panel-lateral:focus-within .panel-marca img {
+    body.pagina-protegida .panel-lateral:focus-within .panel-marca img,
+    body.pagina-protegida.sidebar-mantenido .panel-marca img {
         grid-row: span 2;
     }
     body.pagina-protegida .panel-lateral:hover .panel-marca strong,
@@ -754,13 +757,18 @@ footer {
     body.pagina-protegida .panel-lateral:hover .panel-etiqueta,
     body.pagina-protegida .panel-lateral:focus-within .panel-marca strong,
     body.pagina-protegida .panel-lateral:focus-within .panel-marca small,
-    body.pagina-protegida .panel-lateral:focus-within .panel-etiqueta {
+    body.pagina-protegida .panel-lateral:focus-within .panel-etiqueta,
+    body.pagina-protegida.sidebar-mantenido .panel-marca strong,
+    body.pagina-protegida.sidebar-mantenido .panel-marca small,
+    body.pagina-protegida.sidebar-mantenido .panel-etiqueta {
         display: block;
     }
     body.pagina-protegida .panel-lateral:hover a,
     body.pagina-protegida .panel-lateral:hover .panel-salir,
     body.pagina-protegida .panel-lateral:focus-within a,
-    body.pagina-protegida .panel-lateral:focus-within .panel-salir {
+    body.pagina-protegida .panel-lateral:focus-within .panel-salir,
+    body.pagina-protegida.sidebar-mantenido .panel-lateral a,
+    body.pagina-protegida.sidebar-mantenido .panel-salir {
         justify-content: flex-start;
         padding: 12px 13px;
         font-size: .88rem;
@@ -772,12 +780,14 @@ footer {
         will-change: width, margin-left;
     }
     body.pagina-protegida:has(.panel-lateral:hover) .main-content,
-    body.pagina-protegida:has(.panel-lateral:focus-within) .main-content {
+    body.pagina-protegida:has(.panel-lateral:focus-within) .main-content,
+    body.pagina-protegida.sidebar-mantenido .main-content {
         width: calc(100% - 280px);
         margin-left: 280px;
     }
     body.pagina-protegida:has(.panel-lateral:hover) header,
-    body.pagina-protegida:has(.panel-lateral:focus-within) header {
+    body.pagina-protegida:has(.panel-lateral:focus-within) header,
+    body.pagina-protegida.sidebar-mantenido header {
         left: 280px;
         width: calc(100% - 280px);
     }
