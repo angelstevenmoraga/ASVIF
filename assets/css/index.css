@@ -701,7 +701,7 @@ footer {
         left: 0 !important;
         width: 76px;
         padding: 30px 10px 22px;
-        transition: width .42s cubic-bezier(.22,.61,.36,1), box-shadow .42s ease;
+        transition: width 1.5s ease-in-out, box-shadow 1.5s ease-in-out;
         will-change: width;
         box-shadow: 4px 0 18px rgba(23,49,45,.12);
     }
@@ -725,7 +725,7 @@ footer {
         padding: 12px 8px;
         font-size: 0;
         white-space: nowrap;
-        transition: background .3s ease, color .3s ease, padding .42s cubic-bezier(.22,.61,.36,1), transform .3s ease;
+        transition: background .3s ease, color .3s ease, padding 1.5s ease-in-out, transform .3s ease;
     }
     body.pagina-protegida .panel-lateral a i,
     body.pagina-protegida .panel-salir i {
@@ -776,7 +776,7 @@ footer {
     body.pagina-protegida .main-content {
         width: calc(100% - 76px);
         margin-left: 76px;
-        transition: width .42s cubic-bezier(.22,.61,.36,1), margin-left .42s cubic-bezier(.22,.61,.36,1);
+        transition: width 1.5s ease-in-out, margin-left 1.5s ease-in-out;
         will-change: width, margin-left;
     }
     body.pagina-protegida:has(.panel-lateral:hover) .main-content,
