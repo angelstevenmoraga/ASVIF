@@ -701,7 +701,8 @@ footer {
         left: 0 !important;
         width: 76px;
         padding: 30px 10px 22px;
-        transition: width .28s ease, box-shadow .28s ease;
+        transition: width .42s cubic-bezier(.22,.61,.36,1), box-shadow .42s ease;
+        will-change: width;
         box-shadow: 4px 0 18px rgba(23,49,45,.12);
     }
     body.pagina-protegida .panel-marca {
@@ -724,6 +725,7 @@ footer {
         padding: 12px 8px;
         font-size: 0;
         white-space: nowrap;
+        transition: background .3s ease, color .3s ease, padding .42s cubic-bezier(.22,.61,.36,1), transform .3s ease;
     }
     body.pagina-protegida .panel-lateral a i,
     body.pagina-protegida .panel-salir i {
@@ -766,7 +768,8 @@ footer {
     body.pagina-protegida .main-content {
         width: calc(100% - 76px);
         margin-left: 76px;
-        transition: width .28s ease, margin-left .28s ease;
+        transition: width .42s cubic-bezier(.22,.61,.36,1), margin-left .42s cubic-bezier(.22,.61,.36,1);
+        will-change: width, margin-left;
     }
     body.pagina-protegida:has(.panel-lateral:hover) .main-content,
     body.pagina-protegida:has(.panel-lateral:focus-within) .main-content {
