@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/index.css">
+    <title>Panel de control | ASVIF</title>
+</head>
+<body class="pagina-protegida pagina-dashboard" data-protegida="true">
+    <header class="dashboard-topbar">
+        <div class="header-izquierda"><a href="panel.html" class="marca"><img src="../assets/img/asvif123_Letras_Logo.png" alt="Logotipo de ASVIF"></a></div>
+        <button class="sidebar-toggle" type="button" aria-expanded="false" aria-controls="panel-navegacion"><i class="fa-solid fa-bars"></i><span>Menú</span></button>
+    </header>
+
+    <aside id="panel-navegacion" class="panel-lateral sidebar" aria-label="Panel de navegación">
+        <div class="panel-marca"><img src="../assets/img/asvif_Logotipo.png" alt=""><strong>ASVIF</strong><small>Tu guía financiera</small></div>
+        <span class="panel-etiqueta">Panel de control</span>
+        <a class="activo" href="panel.html"><i class="fa-solid fa-house"></i>Inicio</a>
+        <span class="panel-etiqueta">Herramientas</span>
+        <a href="ingresos-gastos.html"><i class="fa-solid fa-chart-pie"></i>Ingresos y gastos</a>
+        <a href="ahorro.html"><i class="fa-solid fa-piggy-bank"></i>Plan de ahorro</a>
+        <a href="punto-equilibrio.html"><i class="fa-solid fa-scale-balanced"></i>Punto de equilibrio</a>
+        <div class="panel-espaciador"></div>
+        <button type="button" class="panel-salir" data-cerrar-sesion><i class="fa-solid fa-right-from-bracket"></i>Cerrar sesión</button>
+    </aside>
+
+    <main class="dashboard main-content">
+        <section class="dashboard-hero bloque-revelar">
+            <div>
+                <span class="etiqueta">PANEL DE CONTROL</span>
+                <h1>Todo en orden, un paso a la vez.</h1>
+                <p>Consulta tus herramientas financieras y toma decisiones con mayor claridad.</p>
+            </div>
+            <div class="dashboard-hero-icon"><i class="fa-solid fa-chart-line"></i></div>
+        </section>
+
+        <section class="resumen-grid" aria-label="Resumen de herramientas">
+            <a class="resumen-card bloque-revelar" href="ingresos-gastos.html">
+                <span class="resumen-icono verde"><i class="fa-solid fa-wallet"></i></span>
+                <span><small>CONTROL</small><strong>Ingresos y gastos</strong><em>Registra y visualiza tu balance.</em></span>
+                <i class="fa-solid fa-arrow-up-right-from-square resumen-flecha"></i>
+            </a>
+            <a class="resumen-card bloque-revelar" href="ahorro.html">
+                <span class="resumen-icono dorado"><i class="fa-solid fa-piggy-bank"></i></span>
+                <span><small>PLANIFICACIÓN</small><strong>Plan de ahorro</strong><em>Proyecta tus metas financieras.</em></span>
+                <i class="fa-solid fa-arrow-up-right-from-square resumen-flecha"></i>
+            </a>
+            <a class="resumen-card bloque-revelar" href="punto-equilibrio.html">
+                <span class="resumen-icono azul"><i class="fa-solid fa-scale-balanced"></i></span>
+                <span><small>ANÁLISIS</small><strong>Punto de equilibrio</strong><em>Calcula cuánto necesitas vender.</em></span>
+                <i class="fa-solid fa-arrow-up-right-from-square resumen-flecha"></i>
+            </a>
+        </section>
+
+        <section class="dashboard-columnas">
+            <article class="panel-informativo bloque-revelar">
+                <div class="panel-titulo"><span><i class="fa-solid fa-bolt"></i> Acciones rápidas</span><small>Comienza aquí</small></div>
+                <a href="ingresos-gastos.html"><i class="fa-solid fa-plus"></i><span><strong>Actualizar mis movimientos</strong><small>Organiza tus ingresos y gastos del mes.</small></span><i class="fa-solid fa-chevron-right"></i></a>
+                <a href="ahorro.html"><i class="fa-solid fa-bullseye"></i><span><strong>Definir una meta de ahorro</strong><small>Visualiza cuánto puede crecer tu dinero.</small></span><i class="fa-solid fa-chevron-right"></i></a>
+                <a href="punto-equilibrio.html"><i class="fa-solid fa-calculator"></i><span><strong>Revisar mi equilibrio</strong><small>Conoce el mínimo de ventas necesario.</small></span><i class="fa-solid fa-chevron-right"></i></a>
+            </article>
+            <article class="panel-mensaje bloque-revelar">
+                <span class="mensaje-icono"><i class="fa-solid fa-sparkles"></i></span>
+                <span class="etiqueta">RECOMENDACIÓN ASVIF</span>
+                <h2>La claridad también es una meta.</h2>
+                <p>Revisa tus movimientos con frecuencia y convierte tus datos en decisiones pequeñas y sostenibles.</p>
+                <span class="mensaje-estado"><i class="fa-solid fa-shield-heart"></i> Tu información permanece en este dispositivo.</span>
+            </article>
+        </section>
+        <footer class="dashboard-footer">
+            <div class="footer-brand">
+                <img src="../assets/img/asvif123_Letras_Logo.png" alt="Logotipo de ASVIF">
+                <p>Tu guía financiera para tomar decisiones con más claridad.</p>
+            </div>
+            <div class="footer-column">
+                <h3>ASVIF</h3>
+                <a href="ingresos-gastos.html">Ingresos y gastos</a>
+                <a href="ahorro.html">Plan de ahorro</a>
+                <a href="punto-equilibrio.html">Punto de equilibrio</a>
+            </div>
+            <div class="footer-column">
+                <h3>Proyecto</h3>
+                <a href="https://unhsjm.edu.ni/">UNHSJM</a>
+                <span>Managua, Nicaragua</span>
+                <span>Proyecto universitario</span>
+            </div>
+            <div class="footer-column">
+                <h3>Integrantes</h3>
+                <span>Ashlee Franshell Espinoza Estrada</span>
+                <span>Lilieth Cristina Espinoza Pineda</span>
+                <span>Angel Steven Moraga</span>
+            </div>
+            <div class="footer-base">
+                <span>ASVIF · Finanzas personales más claras</span>
+                <span>© <span data-anio></span> ASVIF</span>
+            </div>
+        </footer>
+    </main>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/index.js"></script>
+</body>
+</html>

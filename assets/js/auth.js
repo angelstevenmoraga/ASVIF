@@ -86,7 +86,7 @@ function registrarUsuario(nombre, usuario, password) {
 
 function cerrarSesion() {
     sessionStorage.removeItem(ASVIF_AUTH_KEY);
-    window.location.href = rutaLogin();
+    window.location.href = window.location.pathname.includes("/pages/") ? "../index.html" : "index.html";
 }
 
 function mostrarConfirmacionCerrarSesion() {

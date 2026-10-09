@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     if (typeof haySesion === "function" && haySesion()) {
-        window.location.replace("../index.html");
+        window.location.replace("panel.html");
         return;
     }
 
@@ -8,6 +8,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const tabRegistro = document.getElementById("tab-registro");
     const formLogin = document.getElementById("form-login");
     const formRegistro = document.getElementById("form-registro");
+    const modalError = document.getElementById("modal-error-acceso");
+    const modalErrorContenido = modalError.querySelector(".modal-error-contenido");
+    const cerrarModalError = () => {
+        modalError.hidden = true;
+        document.body.classList.remove("modal-error-abierto");
+    };
+    const mostrarErrorAcceso = () => {
+        modalError.hidden = false;
+        document.body.classList.add("modal-error-abierto");
+        modalErrorContenido.classList.remove("modal-error-sacudir");
+        void modalErrorContenido.offsetWidth;
+        modalErrorContenido.classList.add("modal-error-sacudir");
+        modalError.querySelector(".modal-error-accion").focus();
+    };
+
+    modalError.querySelector(".modal-error-cerrar").addEventListener("click", cerrarModalError);
+    modalError.querySelector(".modal-error-accion").addEventListener("click", () => {
+        cerrarModalError();
+        document.getElementById("login-usuario").focus();
+    });
+    modalError.addEventListener("click", (evento) => {
+        if (evento.target === modalError) cerrarModalError();
+    });
+    document.addEventListener("keydown", (evento) => {
+        if (evento.key === "Escape" && !modalError.hidden) cerrarModalError();
+    });
 
     // Cambiar a Iniciar Sesión
     tabLogin.addEventListener("click", () => {
@@ -43,11 +69,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const password = document.getElementById("login-password").value;
 
         if (!iniciarSesion(usuario, password)) {
-            mostrarMensaje(formLogin, "Usuario o contraseña incorrectos.");
+            mostrarErrorAcceso();
             return;
         }
 
-        window.location.href = "../index.html";
+        window.location.href = "panel.html";
     });
 
     // Captura del envío del Registro

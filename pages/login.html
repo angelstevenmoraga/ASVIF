@@ -77,6 +77,17 @@
         </div>
     </main>
 
+    <div class="modal-error-acceso" id="modal-error-acceso" hidden>
+        <div class="modal-error-contenido" role="alertdialog" aria-modal="true" aria-labelledby="titulo-error-acceso" aria-describedby="mensaje-error-acceso">
+            <button class="modal-error-cerrar" type="button" aria-label="Cerrar aviso"><i class="fa-solid fa-xmark"></i></button>
+            <span class="modal-error-icono"><i class="fa-solid fa-lock"></i></span>
+            <p class="modal-error-etiqueta">NO PUDIMOS VALIDARTE</p>
+            <h2 id="titulo-error-acceso">Datos incorrectos</h2>
+            <p id="mensaje-error-acceso">El usuario o la contraseña no coinciden. Revisa tus datos e inténtalo nuevamente.</p>
+            <button class="modal-error-accion" type="button">Intentar de nuevo</button>
+        </div>
+    </div>
+
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/login.js"></script>
 </body>

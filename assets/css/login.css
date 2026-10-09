@@ -70,3 +70,21 @@ main.contenedor-auth {
 .credenciales-demo { color: var(--texto-suave); font-size: .86rem; text-align: center; margin: 3px 0 0; }
 .credenciales-demo strong { color: var(--verde); }
 .mensaje-formulario { margin: 0; font-weight: 600; }
+
+.modal-error-abierto { overflow: hidden; }
+.modal-error-acceso[hidden] { display: none; }
+.modal-error-acceso { position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; padding: 20px; background: rgba(15, 47, 42, .52); backdrop-filter: blur(5px); animation: modal-error-fondo .22s ease both; }
+.modal-error-contenido { position: relative; width: min(410px, 100%); padding: 38px 30px 30px; border: 1px solid rgba(220,232,226,.9); border-radius: 24px; background: var(--blanco); color: var(--texto); text-align: center; box-shadow: 0 24px 65px rgba(23,49,45,.26); animation: modal-error-aparecer .32s cubic-bezier(.2,.8,.2,1) both; }
+.modal-error-cerrar { position: absolute; top: 13px; right: 13px; display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border: 1px solid var(--borde); border-radius: 10px; background: var(--salvia); color: var(--verde-profundo); box-shadow: none; }
+.modal-error-cerrar:hover { background: var(--verde-claro); color: var(--verde-profundo); box-shadow: none; transform: rotate(5deg); }
+.modal-error-icono { display: grid; place-items: center; width: 62px; height: 62px; margin: 0 auto 16px; border-radius: 19px; background: #f9e4df; color: #bd5548; font-size: 1.4rem; }
+.modal-error-etiqueta { margin: 0 0 8px; color: #bd5548; font: 800 .7rem "Manrope", sans-serif; letter-spacing: .13em; }
+.modal-error-contenido h2 { margin: 0 0 9px; color: var(--verde-profundo); font-size: 1.5rem; }
+.modal-error-contenido > p:not(.modal-error-etiqueta) { max-width: 310px; margin: 0 auto; color: var(--texto-suave); font-size: .9rem; line-height: 1.55; }
+.modal-error-accion { margin-top: 24px; padding: 11px 19px; background: var(--verde-profundo); }
+.modal-error-accion:hover { background: var(--verde); }
+@keyframes modal-error-fondo { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modal-error-aparecer { from { opacity: 0; transform: translateY(16px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes modal-error-sacudir { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-7px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
+.modal-error-sacudir { animation: modal-error-sacudir .4s ease both; }
+@media (prefers-reduced-motion: reduce) { .modal-error-acceso, .modal-error-contenido, .modal-error-sacudir { animation: none; } }
