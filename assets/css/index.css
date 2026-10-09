@@ -694,21 +694,78 @@ footer {
 
 @media (min-width: 901px) {
     body.pagina-protegida header {
-        left: 0;
-        width: 100%;
+        left: 76px;
+        width: calc(100% - 76px);
     }
     body.pagina-protegida .panel-lateral {
-        left: -256px !important;
-        transition: transform .28s ease, box-shadow .28s ease;
+        left: 0 !important;
+        width: 76px;
+        padding: 30px 10px 22px;
+        transition: width .28s ease, box-shadow .28s ease;
+        box-shadow: 4px 0 18px rgba(23,49,45,.12);
+    }
+    body.pagina-protegida .panel-marca {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        column-gap: 0;
+        padding: 5px 0 30px;
+    }
+    body.pagina-protegida .panel-marca img {
+        grid-row: auto;
+    }
+    body.pagina-protegida .panel-marca strong,
+    body.pagina-protegida .panel-marca small,
+    body.pagina-protegida .panel-etiqueta {
+        display: none;
+    }
+    body.pagina-protegida .panel-lateral a,
+    body.pagina-protegida .panel-salir {
+        justify-content: center;
+        padding: 12px 8px;
+        font-size: 0;
+        white-space: nowrap;
+    }
+    body.pagina-protegida .panel-lateral a i,
+    body.pagina-protegida .panel-salir i {
+        width: 22px;
+        margin: 0;
+        font-size: 1rem;
     }
     body.pagina-protegida .panel-lateral:hover,
     body.pagina-protegida .panel-lateral:focus-within {
-        transform: translateX(256px);
+        width: 280px;
         box-shadow: 10px 0 28px rgba(23,49,45,.18);
     }
+    body.pagina-protegida .panel-lateral:hover .panel-marca,
+    body.pagina-protegida .panel-lateral:focus-within .panel-marca {
+        grid-template-columns: 48px 1fr;
+        justify-items: initial;
+        column-gap: 10px;
+        padding: 5px 8px 30px;
+    }
+    body.pagina-protegida .panel-lateral:hover .panel-marca img,
+    body.pagina-protegida .panel-lateral:focus-within .panel-marca img {
+        grid-row: span 2;
+    }
+    body.pagina-protegida .panel-lateral:hover .panel-marca strong,
+    body.pagina-protegida .panel-lateral:hover .panel-marca small,
+    body.pagina-protegida .panel-lateral:hover .panel-etiqueta,
+    body.pagina-protegida .panel-lateral:focus-within .panel-marca strong,
+    body.pagina-protegida .panel-lateral:focus-within .panel-marca small,
+    body.pagina-protegida .panel-lateral:focus-within .panel-etiqueta {
+        display: block;
+    }
+    body.pagina-protegida .panel-lateral:hover a,
+    body.pagina-protegida .panel-lateral:hover .panel-salir,
+    body.pagina-protegida .panel-lateral:focus-within a,
+    body.pagina-protegida .panel-lateral:focus-within .panel-salir {
+        justify-content: flex-start;
+        padding: 12px 13px;
+        font-size: .88rem;
+    }
     body.pagina-protegida .main-content {
-        width: 100%;
-        margin-left: 0;
+        width: calc(100% - 76px);
+        margin-left: 76px;
         transition: width .28s ease, margin-left .28s ease;
     }
     body.pagina-protegida:has(.panel-lateral:hover) .main-content,
