@@ -34,8 +34,50 @@ function generarTabla(evento) {
     }
 }
 
+async function cargarMetas() {
+    const lista = document.getElementById("listaMetas");
+    if (!lista || typeof solicitarApi !== "function") return;
+    try {
+        const datos = await solicitarApi("/api/metas");
+        lista.innerHTML = datos.metas.length ? "" : "<p>Aún no tienes metas creadas.</p>";
+        datos.metas.forEach((meta) => {
+            const elemento = document.createElement("article");
+            const avance = Math.min(100, (meta.monto_actual / meta.monto_objetivo) * 100);
+            elemento.innerHTML = `<strong></strong><span></span><div class="meta-progreso"><i></i></div>`;
+            elemento.querySelector("strong").textContent = meta.nombre;
+            elemento.querySelector("span").textContent = `C$ ${Number(meta.monto_actual).toLocaleString("es-NI")} de C$ ${Number(meta.monto_objetivo).toLocaleString("es-NI")} · ${avance.toFixed(0)}%`;
+            elemento.querySelector("i").style.width = `${avance}%`;
+            lista.appendChild(elemento);
+        });
+    } catch (error) {
+        lista.innerHTML = "<p>Inicia sesión desde el servidor para consultar tus metas.</p>";
+    }
+}
+
+async function guardarMeta(evento) {
+    evento.preventDefault();
+    const estado = document.getElementById("estadoMeta");
+    try {
+        await solicitarApi("/api/metas", {
+            method: "POST",
+            body: JSON.stringify({
+                nombre: document.getElementById("metaNombre").value,
+                montoObjetivo: document.getElementById("metaObjetivo").value,
+                fechaObjetivo: document.getElementById("metaFecha").value
+            })
+        });
+        document.getElementById("formularioMeta").reset();
+        estado.textContent = "Meta guardada";
+        cargarMetas();
+    } catch (error) {
+        estado.textContent = error.message;
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("formularioAhorro").addEventListener("submit", generarTabla);
+    document.getElementById("formularioMeta").addEventListener("submit", guardarMeta);
+    cargarMetas();
     const datos = obtenerDatosUsuario("ahorro", null);
     if (datos) {
         document.getElementById("ahorro").value = datos.ahorroMensual;

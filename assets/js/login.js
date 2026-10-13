@@ -63,12 +63,12 @@ document.addEventListener("DOMContentLoaded", () => {
         elemento.style.color = esError ? "#ffb4a8" : "#d7f5a2";
     };
 
-    formLogin.addEventListener("submit", (e) => {
+    formLogin.addEventListener("submit", async (e) => {
         e.preventDefault();
         const usuario = document.getElementById("login-usuario").value;
         const password = document.getElementById("login-password").value;
 
-        if (!iniciarSesion(usuario, password)) {
+        if (!(await iniciarSesion(usuario, password))) {
             mostrarErrorAcceso();
             return;
         }
@@ -77,10 +77,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Captura del envío del Registro
-    formRegistro.addEventListener("submit", (e) => {
+    formRegistro.addEventListener("submit", async (e) => {
         e.preventDefault();
         const nombre = document.getElementById("reg-nombre").value;
         const usuario = document.getElementById("reg-usuario").value;
+        const correo = document.getElementById("reg-correo").value;
+        const telefono = document.getElementById("reg-telefono").value;
+        const nacionalidad = document.getElementById("reg-nacionalidad").value;
         const password = document.getElementById("reg-password").value;
         const confirmPassword = document.getElementById("reg-confirm-password").value;
 
@@ -94,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const resultado = registrarUsuario(nombre, usuario, password);
+        const resultado = await registrarUsuario(nombre, usuario, correo, telefono, nacionalidad, password);
         if (!resultado.correcto) {
             mostrarMensaje(formRegistro, resultado.mensaje);
             return;

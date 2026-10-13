@@ -9,12 +9,10 @@
 </head>
 <body class="pagina-protegida pagina-dashboard" data-protegida="true">
     <header class="dashboard-topbar">
-        <div class="header-izquierda"><a href="panel.html" class="marca"><img src="../assets/img/asvif123_Letras_Logo.png" alt="Logotipo de ASVIF"></a></div>
-        <button class="sidebar-toggle" type="button" aria-expanded="false" aria-controls="panel-navegacion"><i class="fa-solid fa-bars"></i><span>Menú</span></button>
-        <span class="barra-usuario"><i class="fa-solid fa-circle-user"></i><span>Mi panel financiero</span></span>
+            <a class="dashboard-logo" href="panel.html"><img src="../assets/img/asvif123_Letras_Logo.png" alt="Logotipo de ASVIF"></a>
+            <a class="perfil-usuario" href="perfil.html" aria-label="Abrir perfil de usuario"><i class="fa-solid fa-circle-user"></i></a>
     </header>
     <aside id="panel-navegacion" class="panel-lateral sidebar" aria-label="Panel de navegación">
-        <div class="panel-marca"><img src="../assets/img/asvif_Logotipo.png" alt=""><strong>ASVIF</strong><small>Tu guía financiera</small></div>
         <span class="panel-etiqueta">Panel de control</span>
         <a href="panel.html"><i class="fa-solid fa-house"></i>Inicio</a>
         <span class="panel-etiqueta">Herramientas</span>
@@ -40,6 +38,17 @@
             <label for="tiempo">Tiempo (meses): <input type="number" id="tiempo" min="1" max="600" step="1" required></label>
             <button type="submit">Calcular</button>
         </form>
+
+        <section class="metas-ahorro" aria-labelledby="titulo-metas">
+            <div class="metas-cabecera"><div><p class="etiqueta">OBJETIVOS</p><h3 id="titulo-metas">Mis metas de ahorro</h3></div><span class="metas-estado" id="estadoMeta"></span></div>
+            <form class="formulario-meta" id="formularioMeta">
+                <label for="metaNombre">Nombre<input id="metaNombre" type="text" placeholder="Fondo de emergencia" required></label>
+                <label for="metaObjetivo">Monto objetivo<input id="metaObjetivo" type="number" min="1" step="0.01" placeholder="10000" required></label>
+                <label for="metaFecha">Fecha objetivo<input id="metaFecha" type="date"></label>
+                <button type="submit">Guardar meta</button>
+            </form>
+            <div class="lista-metas" id="listaMetas"><p>Aún no tienes metas creadas.</p></div>
+        </section>
 
         <section class="tabla-contenedor bloque-revelar">
             <table id="tablaAhorro">

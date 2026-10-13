@@ -12,12 +12,11 @@
 </head>
 <body class="pagina-protegida pagina-dashboard" data-protegida="true">
     <header class="dashboard-topbar">
-        <div class="header-izquierda"><a href="panel.html" class="marca"><img src="../assets/img/asvif123_Letras_Logo.png" alt="Logotipo de ASVIF"></a></div>
-        <button class="sidebar-toggle" type="button" aria-expanded="false" aria-controls="panel-navegacion"><i class="fa-solid fa-bars"></i><span>Menú</span></button>
+            <a class="dashboard-logo" href="panel.html"><img src="../assets/img/asvif123_Letras_Logo.png" alt="Logotipo de ASVIF"></a>
+            <a class="perfil-usuario" href="perfil.html" aria-label="Abrir perfil de usuario"><i class="fa-solid fa-circle-user"></i></a>
     </header>
 
     <aside id="panel-navegacion" class="panel-lateral sidebar" aria-label="Panel de navegación">
-        <div class="panel-marca"><img src="../assets/img/asvif_Logotipo.png" alt=""><strong>ASVIF</strong><small>Tu guía financiera</small></div>
         <span class="panel-etiqueta">Panel de control</span>
         <a class="activo" href="panel.html"><i class="fa-solid fa-house"></i>Inicio</a>
         <span class="panel-etiqueta">Herramientas</span>
@@ -33,9 +32,17 @@
             <div>
                 <span class="etiqueta">PANEL DE CONTROL</span>
                 <h1>Todo en orden, un paso a la vez.</h1>
-                <p>Consulta tus herramientas financieras y toma decisiones con mayor claridad.</p>
+                <p data-bienvenida>Consulta tus herramientas financieras y toma decisiones con mayor claridad.</p>
             </div>
             <div class="dashboard-hero-icon"><i class="fa-solid fa-chart-line"></i></div>
+        </section>
+
+        <section class="resumen-financiero" aria-label="Resumen financiero">
+            <article class="resumen-financiero-card"><small>INGRESOS</small><strong data-resumen-ingresos>Sin datos</strong><span>Acumulado registrado</span></article>
+            <article class="resumen-financiero-card"><small>GASTOS</small><strong data-resumen-gastos>Sin datos</strong><span>Acumulado registrado</span></article>
+            <article class="resumen-financiero-card resumen-financiero-destacado"><small>SALDO</small><strong data-resumen-saldo>Sin datos</strong><span>Ingresos menos gastos</span></article>
+            <article class="resumen-financiero-card"><small>ACTIVIDAD</small><strong data-resumen-movimientos>Sin datos</strong><span>Movimientos registrados</span></article>
+            <article class="resumen-financiero-card"><small>METAS</small><strong data-resumen-metas>Sin datos</strong><span>Objetivos de ahorro</span></article>
         </section>
 
         <section class="resumen-grid" aria-label="Resumen de herramientas">
@@ -102,5 +109,6 @@
     </main>
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/index.js"></script>
+    <script src="../assets/js/panel.js"></script>
 </body>
 </html>

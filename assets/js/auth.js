@@ -39,52 +39,47 @@ function obtenerSesion() {
     }
 }
 
-function iniciarSesion(usuario, password) {
-    const usuarioNormalizado = usuario.trim().toLowerCase();
-    const usuarioEncontrado = obtenerUsuarios().find((item) =>
-        typeof item.usuario === "string" &&
-        item.usuario.toLowerCase() === usuarioNormalizado &&
-        item.password === password
-    );
+async function solicitarApi(ruta, opciones = {}) {
+    const respuesta = await fetch(ruta, {
+        credentials: "same-origin",
+        ...opciones,
+        headers: {
+            "Content-Type": "application/json",
+            ...(opciones.headers || {})
+        }
+    });
+    const datos = await respuesta.json().catch(() => ({}));
+    if (!respuesta.ok) throw new Error(datos.error || "No se pudo completar la solicitud.");
+    return datos;
+}
 
-    if (!usuarioEncontrado) {
+async function iniciarSesion(usuario, password) {
+    try {
+        const datos = await solicitarApi("/api/auth/login", {
+            method: "POST",
+            body: JSON.stringify({ usuario, password })
+        });
+        sessionStorage.setItem(ASVIF_AUTH_KEY, JSON.stringify(datos.usuario));
+        return true;
+    } catch (error) {
         return false;
     }
-
-    sessionStorage.setItem(ASVIF_AUTH_KEY, JSON.stringify({
-        usuario: usuarioEncontrado.usuario,
-        nombre: usuarioEncontrado.nombre
-    }));
-    return true;
 }
 
-function registrarUsuario(nombre, usuario, password) {
-    const nombreLimpio = nombre.trim();
-    const usuarioLimpio = usuario.trim();
-    if (nombreLimpio.length < 2 || usuarioLimpio.length < 3 || password.length < 8) {
-        return { correcto: false, mensaje: "Completa los datos con valores válidos." };
+async function registrarUsuario(nombre, usuario, correo, telefono, nacionalidad, password) {
+    try {
+        await solicitarApi("/api/auth/register", {
+            method: "POST",
+            body: JSON.stringify({ nombre, usuario, correo, telefono, nacionalidad, password })
+        });
+        return { correcto: true };
+    } catch (error) {
+        return { correcto: false, mensaje: error.message };
     }
-
-    const usuarios = obtenerUsuarios();
-    const existe = usuarios.some((item) =>
-        typeof item.usuario === "string" &&
-        item.usuario.toLowerCase() === usuarioLimpio.toLowerCase()
-    );
-
-    if (existe) {
-        return { correcto: false, mensaje: "Ese usuario ya existe." };
-    }
-
-    usuarios.push({
-        nombre: nombreLimpio,
-        usuario: usuarioLimpio,
-        password
-    });
-    guardarUsuarios(usuarios);
-    return { correcto: true };
 }
 
-function cerrarSesion() {
+async function cerrarSesion() {
+    await solicitarApi("/api/auth/logout", { method: "POST" }).catch(() => null);
     sessionStorage.removeItem(ASVIF_AUTH_KEY);
     window.location.href = window.location.pathname.includes("/pages/") ? "../index.html" : "index.html";
 }
@@ -196,52 +191,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (evento.key === "Escape" && modal && !modal.hidden) modal._cerrar();
     });
 
-    const sidebarBoton = document.querySelector(".sidebar-toggle");
     const sidebar = document.querySelector(".panel-lateral");
-    if (sidebarBoton && sidebar) {
-        const sidebarEstadoKey = "asvifSidebarExpandido";
-        const esEscritorio = () => window.matchMedia("(min-width: 901px)").matches;
-        const cambiarSidebar = (abierto) => {
-            sidebarBoton.setAttribute("aria-expanded", String(abierto));
-            sidebar.setAttribute("aria-hidden", String(!abierto));
-            sidebar.classList.toggle("abierto", abierto);
-            document.body.classList.toggle("sidebar-abierto", abierto);
-        };
-
-        if (esEscritorio() && sessionStorage.getItem(sidebarEstadoKey) === "true") {
-            document.body.classList.add("sidebar-mantenido");
-        }
-
+    if (sidebar) {
         sidebar.setAttribute("aria-hidden", "false");
-        sidebarBoton.addEventListener("click", () => {
-            cambiarSidebar(!sidebar.classList.contains("abierto"));
+
+        sidebar.querySelectorAll("a, .panel-salir").forEach((elemento) => {
+            const nombre = elemento.textContent.trim();
+            if (nombre) elemento.setAttribute("title", nombre);
         });
 
         sidebar.querySelectorAll("a").forEach((enlace) => {
-            enlace.addEventListener("click", () => {
-                if (esEscritorio()) sessionStorage.setItem(sidebarEstadoKey, "true");
-                cambiarSidebar(false);
-            });
-        });
-
-        document.addEventListener("mousemove", (evento) => {
-            if (!esEscritorio() || sessionStorage.getItem(sidebarEstadoKey) !== "true") return;
-            if (evento.clientX > 280 && !sidebar.matches(":hover")) {
-                sessionStorage.removeItem(sidebarEstadoKey);
-                document.body.classList.remove("sidebar-mantenido");
-            }
-        });
-
-        document.addEventListener("keydown", (evento) => {
-            if (evento.key === "Escape") cambiarSidebar(false);
-        });
-
-        document.addEventListener("click", (evento) => {
-            if (sidebar.classList.contains("abierto") &&
-                !sidebar.contains(evento.target) &&
-                !sidebarBoton.contains(evento.target)) {
-                cambiarSidebar(false);
-            }
+            enlace.addEventListener("click", () => sidebar.setAttribute("aria-hidden", "false"));
         });
     }
 
