@@ -66,6 +66,14 @@ async function iniciarSesion(usuario, password) {
     }
 }
 
+function iniciarSesionDemo() {
+    sessionStorage.setItem(ASVIF_AUTH_KEY, JSON.stringify({
+        usuario: ASVIF_DEFAULT_USER.usuario,
+        nombre: ASVIF_DEFAULT_USER.nombre,
+        correo: "admin@asvif.local"
+    }));
+}
+
 async function registrarUsuario(nombre, usuario, correo, telefono, nacionalidad, password) {
     try {
         await solicitarApi("/api/auth/register", {

@@ -8,7 +8,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const tabRegistro = document.getElementById("tab-registro");
     const formLogin = document.getElementById("form-login");
     const formRegistro = document.getElementById("form-registro");
+    const botonDemo = document.getElementById("btn-demo");
     const modalError = document.getElementById("modal-error-acceso");
+    const modalAviso = document.getElementById("modal-aviso-registro");
     const modalErrorContenido = modalError.querySelector(".modal-error-contenido");
     const cerrarModalError = () => {
         modalError.hidden = true;
@@ -22,6 +24,22 @@ document.addEventListener("DOMContentLoaded", () => {
         modalErrorContenido.classList.add("modal-error-sacudir");
         modalError.querySelector(".modal-error-accion").focus();
     };
+    const cerrarModalAviso = () => {
+        modalAviso.hidden = true;
+        document.body.classList.remove("modal-error-abierto");
+    };
+    const mostrarAvisoRegistro = (titulo, mensaje, exitoso = false, etiqueta = "AVISO DE REGISTRO") => {
+        modalAviso.querySelector(".modal-aviso-etiqueta").textContent = etiqueta;
+        modalAviso.querySelector("#titulo-aviso-registro").textContent = titulo;
+        modalAviso.querySelector("#mensaje-aviso-registro").textContent = mensaje;
+        modalAviso.classList.toggle("etapa-exitosa", exitoso);
+        modalAviso.querySelector(".modal-aviso-icono i").className = exitoso
+            ? "fa-solid fa-circle-check"
+            : "fa-solid fa-circle-exclamation";
+        modalAviso.hidden = false;
+        document.body.classList.add("modal-error-abierto");
+        modalAviso.querySelector(".modal-aviso-accion").focus();
+    };
 
     modalError.querySelector(".modal-error-cerrar").addEventListener("click", cerrarModalError);
     modalError.querySelector(".modal-error-accion").addEventListener("click", () => {
@@ -31,8 +49,14 @@ document.addEventListener("DOMContentLoaded", () => {
     modalError.addEventListener("click", (evento) => {
         if (evento.target === modalError) cerrarModalError();
     });
+    modalAviso.querySelector(".modal-aviso-cerrar").addEventListener("click", cerrarModalAviso);
+    modalAviso.querySelector(".modal-aviso-accion").addEventListener("click", cerrarModalAviso);
+    modalAviso.addEventListener("click", (evento) => {
+        if (evento.target === modalAviso) cerrarModalAviso();
+    });
     document.addEventListener("keydown", (evento) => {
         if (evento.key === "Escape" && !modalError.hidden) cerrarModalError();
+        if (evento.key === "Escape" && !modalAviso.hidden) cerrarModalAviso();
     });
 
     // Cambiar a Iniciar Sesión
@@ -51,18 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
         formLogin.classList.remove("activo");
     });
 
-    const mostrarMensaje = (formulario, mensaje, esError = true) => {
-        let elemento = formulario.querySelector(".mensaje-formulario");
-        if (!elemento) {
-            elemento = document.createElement("p");
-            elemento.className = "mensaje-formulario";
-            formulario.appendChild(elemento);
-        }
-        elemento.textContent = mensaje;
-        elemento.setAttribute("role", "alert");
-        elemento.style.color = esError ? "#ffb4a8" : "#d7f5a2";
-    };
-
     formLogin.addEventListener("submit", async (e) => {
         e.preventDefault();
         const usuario = document.getElementById("login-usuario").value;
@@ -73,7 +85,18 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        window.location.href = "panel.html";
+        mostrarAvisoRegistro("Inicio de sesión correcto", "Has iniciado sesión correctamente. Ya puedes entrar a tu panel.", true, "ACCESO CONFIRMADO");
+        modalAviso.querySelector(".modal-aviso-accion").addEventListener("click", () => {
+            window.location.href = "panel.html";
+        }, { once: true });
+    });
+
+    botonDemo.addEventListener("click", () => {
+        iniciarSesionDemo();
+        mostrarAvisoRegistro("Inicio de sesión correcto", "La sesión demo está activa. Ya puedes entrar a tu panel.", true, "ACCESO DEMO CONFIRMADO");
+        modalAviso.querySelector(".modal-aviso-accion").addEventListener("click", () => {
+            window.location.href = "panel.html";
+        }, { once: true });
     });
 
     // Captura del envío del Registro
@@ -87,24 +110,34 @@ document.addEventListener("DOMContentLoaded", () => {
         const password = document.getElementById("reg-password").value;
         const confirmPassword = document.getElementById("reg-confirm-password").value;
 
-        if (password !== confirmPassword) {
-            mostrarMensaje(formRegistro, "Las contraseñas no coinciden.");
+        const campos = [...formRegistro.querySelectorAll("input")];
+        const campoInvalido = campos.find((campo) => !campo.checkValidity());
+        if (campoInvalido) {
+            campoInvalido.reportValidity();
+            mostrarAvisoRegistro("Revisa tus datos", campoInvalido.validationMessage);
+            campoInvalido.focus();
             return;
         }
 
-        if (password.length < 8) {
-            mostrarMensaje(formRegistro, "La contraseña debe tener al menos 8 caracteres.");
+        if (password !== confirmPassword) {
+            mostrarAvisoRegistro("Las contraseñas no coinciden", "Escribe la misma contraseña en ambos campos.");
+            document.getElementById("reg-confirm-password").focus();
+            return;
+        }
+        if (!/[A-Za-z]/.test(password) || !/\d/.test(password)) {
+            mostrarAvisoRegistro("Contraseña no válida", "La contraseña debe incluir al menos una letra y un número.");
+            document.getElementById("reg-password").focus();
             return;
         }
 
         const resultado = await registrarUsuario(nombre, usuario, correo, telefono, nacionalidad, password);
         if (!resultado.correcto) {
-            mostrarMensaje(formRegistro, resultado.mensaje);
+            mostrarAvisoRegistro("No se pudo crear la cuenta", resultado.mensaje || "Comprueba los datos e inténtalo de nuevo.");
             return;
         }
 
-        mostrarMensaje(formRegistro, "Cuenta creada. Ahora puedes iniciar sesión.", false);
-        tabLogin.click();
+        mostrarAvisoRegistro("Registro exitoso", "Tu cuenta fue creada. Ya puedes iniciar sesión.", true);
         formRegistro.reset();
+        modalAviso.querySelector(".modal-aviso-accion").addEventListener("click", () => tabLogin.click(), { once: true });
     });
 });

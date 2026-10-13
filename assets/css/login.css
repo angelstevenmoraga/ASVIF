@@ -57,6 +57,14 @@ main.contenedor-auth {
 
 .campo input:focus { outline: 3px solid rgba(47, 117, 104, .2); border-color: var(--verde); }
 .btn-submit { width: 100%; margin-top: 8px; padding: 13px; }
+.btn-demo {
+    width: 100%;
+    background: var(--verde-claro);
+    color: var(--verde-profundo);
+    border: 1px solid var(--borde);
+    box-shadow: none;
+}
+.btn-demo:hover { background: var(--salvia); color: var(--verde-profundo); box-shadow: none; }
 .btn-google {
     width: 100%;
     background: var(--blanco);
@@ -87,4 +95,28 @@ main.contenedor-auth {
 @keyframes modal-error-aparecer { from { opacity: 0; transform: translateY(16px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes modal-error-sacudir { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-7px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
 .modal-error-sacudir { animation: modal-error-sacudir .4s ease both; }
+.modal-aviso[hidden] { display: none; }
+.modal-aviso { position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; padding: 20px; background: rgba(15, 47, 42, .52); backdrop-filter: blur(5px); animation: modal-error-fondo .22s ease both; }
+.modal-aviso-contenido { position: relative; width: min(410px, 100%); padding: 38px 30px 30px; border: 1px solid rgba(220,232,226,.9); border-radius: 24px; background: var(--blanco); color: var(--texto); text-align: center; box-shadow: 0 24px 65px rgba(23,49,45,.26); animation: modal-error-aparecer .32s cubic-bezier(.2,.8,.2,1) both; }
+.modal-aviso-cerrar { position: absolute; top: 13px; right: 13px; display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border: 1px solid var(--borde); border-radius: 10px; background: var(--salvia); color: var(--verde-profundo); box-shadow: none; }
+.modal-aviso-cerrar:hover { background: var(--verde-claro); color: var(--verde-profundo); box-shadow: none; }
+.modal-aviso-icono { display: grid; place-items: center; width: 62px; height: 62px; margin: 0 auto 16px; border-radius: 19px; background: #fff3d6; color: #b87816; font-size: 1.4rem; }
+.modal-aviso.etapa-exitosa .modal-aviso-icono { background: #e1f4df; color: var(--verde); }
+.modal-aviso-etiqueta { margin: 0 0 8px; color: #b87816; font: 800 .7rem "Manrope", sans-serif; letter-spacing: .13em; }
+.modal-aviso.etapa-exitosa .modal-aviso-etiqueta { color: var(--verde); }
+.modal-aviso-contenido h2 { margin: 0 0 9px; color: var(--verde-profundo); font-size: 1.5rem; }
+.modal-aviso-contenido > p:not(.modal-aviso-etiqueta) { max-width: 310px; margin: 0 auto; color: var(--texto-suave); font-size: .9rem; line-height: 1.55; }
+.modal-aviso-accion { margin-top: 24px; padding: 11px 19px; background: var(--verde-profundo); }
+.modal-aviso-accion:hover { background: var(--verde); }
 @media (prefers-reduced-motion: reduce) { .modal-error-acceso, .modal-error-contenido, .modal-error-sacudir { animation: none; } }
+@media (max-width: 480px) {
+    main.contenedor-auth { min-height: calc(100vh - 68px); padding: 28px 12px 42px; }
+    .tarjeta-auth { padding: 22px 16px; border-radius: 22px; }
+    .logo-auth { margin-bottom: 22px; }
+    .logo-auth img { width: 68px; height: 68px; }
+    .logo-auth h2 { font-size: 1.1rem; }
+    .pestanias { gap: 4px; margin-bottom: 20px; }
+    .tab-btn { font-size: .82rem; }
+    .modal-error-contenido, .modal-aviso-contenido { padding: 34px 20px 24px; }
+    .modal-error-contenido h2, .modal-aviso-contenido h2 { font-size: 1.3rem; }
+}

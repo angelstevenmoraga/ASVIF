@@ -88,7 +88,24 @@ async function handleApi(request, response, pathname) {
         if (fields.some((field) => typeof body[field] !== "string" || !body[field].trim())) {
             return sendJson(response, 400, { error: "Todos los campos son obligatorios." });
         }
-        if (body.password.length < 8) return sendJson(response, 400, { error: "La contraseña debe tener al menos 8 caracteres." });
+        if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s'-]{2,80}$/.test(body.nombre.trim())) {
+            return sendJson(response, 400, { error: "El nombre solo puede contener letras y espacios." });
+        }
+        if (!/^[A-Za-z0-9_]{3,30}$/.test(body.usuario.trim())) {
+            return sendJson(response, 400, { error: "El usuario debe tener entre 3 y 30 caracteres: letras, números o guion bajo." });
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(body.correo.trim())) {
+            return sendJson(response, 400, { error: "Escribe un correo electrónico válido." });
+        }
+        if (!/^[+]?[0-9][0-9\s().-]{6,19}$/.test(body.telefono.trim())) {
+            return sendJson(response, 400, { error: "El número de teléfono no es válido." });
+        }
+        if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s'-]{2,40}$/.test(body.nacionalidad.trim())) {
+            return sendJson(response, 400, { error: "La nacionalidad solo puede contener letras y espacios." });
+        }
+        if (body.password.length < 8 || body.password.length > 72 || !/[A-Za-z]/.test(body.password) || !/\d/.test(body.password)) {
+            return sendJson(response, 400, { error: "La contraseña debe tener 8-72 caracteres, una letra y un número." });
+        }
         try {
             const passwordHash = await hashPassword(body.password);
             const result = database.prepare(`

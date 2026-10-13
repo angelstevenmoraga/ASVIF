@@ -1,7 +1,7 @@
 @import url("index.css");
 
 main { max-width: 1220px; margin: 0 auto; padding: 44px 20px 70px; }
-.contenedor { display: grid; grid-template-columns: repeat(2, minmax(280px, 1fr)); gap: 20px; }
+.contenedor { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .bloque { background: var(--blanco); border: 1px solid var(--borde); border-radius: 22px; padding: 26px; box-shadow: 0 12px 30px rgba(22,63,59,.08); }
 .bloque h2 { color: var(--verde-profundo); margin: 0 0 20px; font-size: 1.35rem; }
 .bloque label { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 13px 0; color: var(--texto-suave); font-weight: 600; }
@@ -22,4 +22,14 @@ canvas { display: block; max-width: 430px; margin: 22px auto 0; background: rgba
 .historial table { width: 100%; min-width: 520px; border-collapse: collapse; text-align: left; }
 .historial th, .historial td { padding: 11px; border-bottom: 1px solid var(--borde); }
 .historial th { color: var(--texto-suave); font-size: .72rem; text-transform: uppercase; }
-@media (max-width: 650px) { main { padding: 28px 16px 50px; } .contenedor { grid-template-columns: 1fr; } .resumen { grid-column: auto; } .bloque label { align-items: flex-start; flex-direction: column; gap: 6px; } input[type="number"] { width: 100%; } }
+@media (max-width: 900px) {
+    .contenedor { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 650px) {
+    main { padding: 28px 16px 50px; }
+    .contenedor { grid-template-columns: 1fr; }
+    .resumen { grid-column: auto; }
+    .bloque { padding: 20px; }
+    .bloque label { align-items: flex-start; flex-direction: column; gap: 6px; }
+    input[type="number"] { width: 100%; }
+}
