@@ -22,12 +22,44 @@
             <label for="perfilNombre">Nombre completo<input id="perfilNombre" type="text" required></label>
             <label for="perfilCorreo">Correo electrónico<input id="perfilCorreo" type="email" readonly></label>
             <label for="perfilTelefono">Número de teléfono<input id="perfilTelefono" type="tel" required></label>
-            <label for="perfilNacionalidad">Nacionalidad<input id="perfilNacionalidad" type="text" required></label>
+            <label for="perfilNacionalidad">País<select id="perfilNacionalidad" required><option value="">Selecciona un país</option></select></label>
             <button type="submit">Guardar cambios</button>
             <p id="mensajePerfil" role="status"></p>
         </form>
+        <section class="control-financiero" aria-labelledby="titulo-control">
+            <div class="seccion-cabecera">
+                <div><p class="etiqueta">CONTROL FINANCIERO</p><h2 id="titulo-control">Mi panorama financiero</h2></div>
+                <span class="seccion-icono"><i class="fa-solid fa-chart-line"></i></span>
+            </div>
+            <div class="indicadores-financieros">
+                <article><small>INGRESOS</small><strong id="controlIngresos">C$ 0.00</strong></article>
+                <article><small>GASTOS</small><strong id="controlGastos">C$ 0.00</strong></article>
+                <article><small>SALDO</small><strong id="controlSaldo">C$ 0.00</strong></article>
+            </div>
+            <div class="graficas-grid">
+                <article class="grafica-card"><h3>Ingresos y gastos</h3><canvas id="graficaBalance" aria-label="Gráfica de ingresos y gastos"></canvas></article>
+                <article class="grafica-card"><h3>Gastos por categoría</h3><canvas id="graficaCategorias" aria-label="Gráfica de gastos por categoría"></canvas></article>
+            </div>
+        </section>
+        <section class="control-financiero" aria-labelledby="titulo-tarjetas">
+            <div class="seccion-cabecera">
+                <div><p class="etiqueta">ORGANIZACIÓN</p><h2 id="titulo-tarjetas">Fechas de mis tarjetas</h2><p class="seccion-descripcion">Registra solo referencias para recordar fechas. No guardamos datos bancarios.</p></div>
+                <span class="seccion-icono dorado"><i class="fa-solid fa-calendar-check"></i></span>
+            </div>
+            <form id="formularioTarjeta" class="tarjeta-formulario">
+                <label for="tarjetaAlias">Alias<input id="tarjetaAlias" maxlength="80" placeholder="Tarjeta del supermercado" required></label>
+                <label for="tarjetaEntidad">Entidad (opcional)<input id="tarjetaEntidad" maxlength="80" placeholder="Banco o tienda"></label>
+                <label for="tarjetaLimite">Límite de referencia<input id="tarjetaLimite" type="number" min="0" step="0.01" placeholder="10000" required></label>
+                <label for="tarjetaCorte">Día de corte<input id="tarjetaCorte" type="number" min="1" max="31" placeholder="15" required></label>
+                <label for="tarjetaPago">Día de pago<input id="tarjetaPago" type="number" min="1" max="31" placeholder="30" required></label>
+                <button type="submit">Agregar tarjeta</button>
+                <p id="mensajeTarjeta" role="status"></p>
+            </form>
+            <div id="listaTarjetas" class="lista-tarjetas"><p class="vacio">Aún no tienes tarjetas de control registradas.</p></div>
+        </section>
     </main>
     <script src="../assets/js/auth.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="../assets/js/perfil.js"></script>
 </body>
 </html>

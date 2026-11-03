@@ -8,5 +8,8 @@
   },
   "engines": {
     "node": ">=22"
+  },
+  "dependencies": {
+    "mssql": "^12.7.6"
   }
 }

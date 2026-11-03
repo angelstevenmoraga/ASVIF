@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     if (typeof haySesion === "function" && haySesion()) {
         window.location.replace("panel.html");
         return;
@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const formLogin = document.getElementById("form-login");
     const formRegistro = document.getElementById("form-registro");
     const botonDemo = document.getElementById("btn-demo");
+    const selectorPais = document.getElementById("reg-nacionalidad");
     const modalError = document.getElementById("modal-error-acceso");
     const modalAviso = document.getElementById("modal-aviso-registro");
     const modalErrorContenido = modalError.querySelector(".modal-error-contenido");
@@ -40,6 +41,14 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.classList.add("modal-error-abierto");
         modalAviso.querySelector(".modal-aviso-accion").focus();
     };
+
+    try {
+        const datos = await solicitarApi("/api/paises");
+        datos.paises.forEach((pais) => selectorPais.add(new Option(pais.nombre, pais.nombre)));
+    } catch (error) {
+        selectorPais.disabled = true;
+        selectorPais.options[0].textContent = "No se pudo cargar la lista";
+    }
 
     modalError.querySelector(".modal-error-cerrar").addEventListener("click", cerrarModalError);
     modalError.querySelector(".modal-error-accion").addEventListener("click", () => {

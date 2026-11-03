@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de monedas | ASVIF</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/conversor-moneda.css">
+</head>
+<body class="pagina-protegida pagina-dashboard" data-protegida="true">
+    <header class="dashboard-topbar">
+        <a class="dashboard-logo" href="panel.html"><img src="../assets/img/asvif123_Letras_Logo.png" alt="Logotipo de ASVIF"></a>
+        <a class="perfil-usuario" href="perfil.html" aria-label="Abrir perfil de usuario"><i class="fa-solid fa-circle-user"></i></a>
+    </header>
+
+    <aside id="panel-navegacion" class="panel-lateral sidebar" aria-label="Panel de navegación">
+        <span class="panel-etiqueta">Panel de control</span>
+        <a href="panel.html"><i class="fa-solid fa-house"></i>Inicio</a>
+        <span class="panel-etiqueta">Herramientas</span>
+        <a href="ingresos-gastos.html"><i class="fa-solid fa-chart-pie"></i>Ingresos y gastos</a>
+        <a href="ahorro.html"><i class="fa-solid fa-piggy-bank"></i>Plan de ahorro</a>
+        <a href="punto-equilibrio.html"><i class="fa-solid fa-scale-balanced"></i>Punto de equilibrio</a>
+        <a class="activo" href="conversor-moneda.html"><i class="fa-solid fa-money-bill-transfer"></i>Conversor de monedas</a>
+        <div class="panel-espaciador"></div>
+        <button type="button" class="panel-salir" data-cerrar-sesion><i class="fa-solid fa-right-from-bracket"></i>Cerrar sesión</button>
+    </aside>
+
+    <main class="conversor main-content">
+        <section class="conversor-encabezado">
+            <div>
+                <span class="etiqueta">CALCULADORA</span>
+                <h1>Conversor de monedas</h1>
+                <p>Convierte dólares estadounidenses a monedas de Latinoamérica de forma rápida y clara.</p>
+            </div>
+            <span class="conversor-icono" aria-hidden="true"><i class="fa-solid fa-money-bill-transfer"></i></span>
+        </section>
+
+        <div class="conversor-contenido">
+            <section class="conversor-tarjeta">
+                <h2>Realiza tu conversión</h2>
+                <form id="formularioConversor">
+                    <label for="dolares">Monto en dólares (USD)</label>
+                    <div class="campo-moneda"><span>$</span><input id="dolares" type="number" min="0" max="1000000000" step="0.01" placeholder="100.00" required></div>
+                    <label for="moneda">Convertir a</label>
+                    <select id="moneda"></select>
+                    <button type="submit">Convertir ahora <i class="fa-solid fa-arrow-right"></i></button>
+                </form>
+                <p class="mensaje-error" id="mensajeError" role="alert" hidden></p>
+            </section>
+
+            <aside class="conversor-ayuda">
+                <span class="etiqueta">TASA DE REFERENCIA</span>
+                <h2 id="tasaReferencia">1 USD = 36.6243 NIO</h2>
+                <p>Las tasas incluidas son valores de referencia configurables. Verifica el tipo de cambio vigente antes de realizar una operación.</p>
+            </aside>
+        </div>
+
+        <section class="conversor-resultado" id="resultadoConversor" aria-live="polite" hidden>
+            <span class="etiqueta">RESULTADO</span>
+            <p id="montoResultado"></p>
+            <strong id="valorResultado"></strong>
+            <small id="nombreResultado"></small>
+        </section>
+    </main>
+
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/conversor-moneda.js"></script>
+</body>
+</html>

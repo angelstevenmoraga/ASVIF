@@ -55,7 +55,8 @@ main.contenedor-auth {
     font-size: 1rem;
 }
 
-.campo input:focus { outline: 3px solid rgba(47, 117, 104, .2); border-color: var(--verde); }
+.campo input:focus, .campo select:focus { outline: 3px solid rgba(47, 117, 104, .2); border-color: var(--verde); }
+.campo select { width: 100%; padding: 13px 14px; border: 1px solid var(--borde); border-radius: 12px; background: #fbfdfb; color: var(--texto); font-size: 1rem; }
 .btn-submit { width: 100%; margin-top: 8px; padding: 13px; }
 .btn-demo {
     width: 100%;

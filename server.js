@@ -56,32 +56,37 @@ function readCookie(request, name) {
     return match ? decodeURIComponent(match.slice(name.length + 1)) : null;
 }
 
-function setSession(response, userId) {
+async function setSession(response, userId) {
     const token = crypto.randomBytes(32).toString("hex");
     const tokenHash = hashToken(token);
     const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString();
-    database.prepare("INSERT INTO sesiones (token_hash, usuario_id, expira_en) VALUES (?, ?, ?)").run(tokenHash, userId, expiresAt);
+    await database.run("INSERT INTO sesiones (token_hash, usuario_id, expira_en) VALUES (?, ?, ?)", [tokenHash, userId, expiresAt]);
     response.setHeader("Set-Cookie", `asvif_session=${encodeURIComponent(token)}; HttpOnly; SameSite=Lax; Path=/; Max-Age=604800`);
 }
 
-function getCurrentUser(request) {
+async function getCurrentUser(request) {
     const token = readCookie(request, "asvif_session");
     if (!token) return null;
-    const session = database.prepare(`
+    const session = await database.get(`
         SELECT usuarios.id, usuarios.nombre, usuarios.usuario, usuarios.correo, usuarios.telefono, usuarios.nacionalidad
         FROM sesiones JOIN usuarios ON usuarios.id = sesiones.usuario_id
-        WHERE sesiones.token_hash = ? AND sesiones.expira_en > datetime('now')
-    `).get(hashToken(token));
+        WHERE sesiones.token_hash = ? AND sesiones.expira_en > SYSUTCDATETIME()
+    `, [hashToken(token)]);
     return session || null;
 }
 
-function requireUser(request, response) {
-    const user = getCurrentUser(request);
+async function requireUser(request, response) {
+    const user = await getCurrentUser(request);
     if (!user) sendJson(response, 401, { error: "Sesión no válida." });
     return user;
 }
 
 async function handleApi(request, response, pathname) {
+    if (request.method === "GET" && pathname === "/api/paises") {
+        const paises = await database.all("SELECT id, nombre FROM paises ORDER BY nombre");
+        return sendJson(response, 200, { paises });
+    }
+
     if (request.method === "POST" && pathname === "/api/auth/register") {
         const body = await readJson(request);
         const fields = ["nombre", "usuario", "correo", "telefono", "nacionalidad", "password"];
@@ -100,19 +105,19 @@ async function handleApi(request, response, pathname) {
         if (!/^[+]?[0-9][0-9\s().-]{6,19}$/.test(body.telefono.trim())) {
             return sendJson(response, 400, { error: "El número de teléfono no es válido." });
         }
-        if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s'-]{2,40}$/.test(body.nacionalidad.trim())) {
-            return sendJson(response, 400, { error: "La nacionalidad solo puede contener letras y espacios." });
-        }
+        const pais = await database.get("SELECT id FROM paises WHERE nombre = ?", [body.nacionalidad.trim()]);
+        if (!pais) return sendJson(response, 400, { error: "Selecciona un país válido de la lista." });
         if (body.password.length < 8 || body.password.length > 72 || !/[A-Za-z]/.test(body.password) || !/\d/.test(body.password)) {
             return sendJson(response, 400, { error: "La contraseña debe tener 8-72 caracteres, una letra y un número." });
         }
         try {
             const passwordHash = await hashPassword(body.password);
-            const result = database.prepare(`
+            const result = await database.run(`
                 INSERT INTO usuarios (nombre, usuario, correo, telefono, nacionalidad, password_hash)
+                OUTPUT INSERTED.id
                 VALUES (?, ?, ?, ?, ?, ?)
-            `).run(body.nombre.trim(), body.usuario.trim(), body.correo.trim().toLowerCase(), body.telefono.trim(), body.nacionalidad.trim(), passwordHash);
-            return sendJson(response, 201, { id: Number(result.lastInsertRowid), mensaje: "Cuenta creada." });
+            `, [body.nombre.trim(), body.usuario.trim(), body.correo.trim().toLowerCase(), body.telefono.trim(), body.nacionalidad.trim(), passwordHash]);
+            return sendJson(response, 201, { id: result.recordset[0].id, mensaje: "Cuenta creada." });
         } catch (error) {
             if (String(error.message).includes("UNIQUE")) return sendJson(response, 409, { error: "El usuario o correo ya está registrado." });
             throw error;
@@ -121,58 +126,59 @@ async function handleApi(request, response, pathname) {
 
     if (request.method === "POST" && pathname === "/api/auth/login") {
         const body = await readJson(request);
-        const user = database.prepare("SELECT * FROM usuarios WHERE usuario = ? COLLATE NOCASE").get(String(body.usuario || "").trim());
+        const user = await database.get("SELECT * FROM usuarios WHERE usuario = ? COLLATE Latin1_General_100_CI_AS", [String(body.usuario || "").trim()]);
         if (!user || !(await verifyPassword(String(body.password || ""), user.password_hash))) {
             return sendJson(response, 401, { error: "Usuario o contraseña incorrectos." });
         }
-        setSession(response, user.id);
+        await setSession(response, user.id);
         return sendJson(response, 200, { usuario: { nombre: user.nombre, usuario: user.usuario, correo: user.correo } });
     }
 
     if (request.method === "POST" && pathname === "/api/auth/logout") {
         const token = readCookie(request, "asvif_session");
-        if (token) database.prepare("DELETE FROM sesiones WHERE token_hash = ?").run(hashToken(token));
+        if (token) await database.run("DELETE FROM sesiones WHERE token_hash = ?", [hashToken(token)]);
         response.setHeader("Set-Cookie", "asvif_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0");
         return sendJson(response, 200, { correcto: true });
     }
 
     if (request.method === "GET" && pathname === "/api/auth/me") {
-        const user = requireUser(request, response);
+        const user = await requireUser(request, response);
         return user ? sendJson(response, 200, { usuario: user }) : undefined;
     }
 
     if (request.method === "PUT" && pathname === "/api/auth/profile") {
-        const user = requireUser(request, response);
+        const user = await requireUser(request, response);
         if (!user) return;
         const body = await readJson(request);
         const nombre = String(body.nombre || "").trim();
         const telefono = String(body.telefono || "").trim();
         const nacionalidad = String(body.nacionalidad || "").trim();
-        if (nombre.length < 2 || telefono.length < 7 || nacionalidad.length < 2) {
+        const pais = await database.get("SELECT id FROM paises WHERE nombre = ?", [nacionalidad]);
+        if (nombre.length < 2 || telefono.length < 7 || !pais) {
             return sendJson(response, 400, { error: "Completa los datos del perfil." });
         }
-        database.prepare("UPDATE usuarios SET nombre = ?, telefono = ?, nacionalidad = ? WHERE id = ?").run(nombre, telefono, nacionalidad, user.id);
+        await database.run("UPDATE usuarios SET nombre = ?, telefono = ?, nacionalidad = ? WHERE id = ?", [nombre, telefono, nacionalidad, user.id]);
         return sendJson(response, 200, { correcto: true });
     }
 
     if (request.method === "GET" && pathname === "/api/dashboard/summary") {
-        const user = requireUser(request, response);
+        const user = await requireUser(request, response);
         if (!user) return;
-        const resumen = database.prepare(`
+        const resumen = await database.get(`
             SELECT
                 COALESCE(SUM(CASE WHEN tipo = 'ingreso' THEN monto ELSE 0 END), 0) AS ingresos,
                 COALESCE(SUM(CASE WHEN tipo = 'gasto' THEN monto ELSE 0 END), 0) AS gastos,
                 COUNT(*) AS movimientos
             FROM movimientos
             WHERE usuario_id = ?
-        `).get(user.id);
-        const metas = database.prepare(`
+        `, [user.id]);
+        const metas = await database.get(`
             SELECT COUNT(*) AS cantidad,
                 COALESCE(SUM(monto_objetivo), 0) AS objetivo,
                 COALESCE(SUM(monto_actual), 0) AS ahorrado
             FROM metas_ahorro
             WHERE usuario_id = ?
-        `).get(user.id);
+        `, [user.id]);
         return sendJson(response, 200, {
             ingresos: resumen.ingresos,
             gastos: resumen.gastos,
@@ -183,7 +189,7 @@ async function handleApi(request, response, pathname) {
     }
 
     if (request.method === "POST" && pathname === "/api/movimientos") {
-        const user = requireUser(request, response);
+        const user = await requireUser(request, response);
         if (!user) return;
         const body = await readJson(request);
         const monto = Number(body.monto);
@@ -191,15 +197,16 @@ async function handleApi(request, response, pathname) {
             return sendJson(response, 400, { error: "El movimiento no es válido." });
         }
         const fecha = /^\d{4}-\d{2}-\d{2}$/.test(String(body.fecha || "")) ? body.fecha : new Date().toISOString().slice(0, 10);
-        const result = database.prepare(`
+        const result = await database.run(`
             INSERT INTO movimientos (usuario_id, tipo, categoria, monto, fecha)
+            OUTPUT INSERTED.id
             VALUES (?, ?, ?, ?, ?)
-        `).run(user.id, body.tipo, String(body.categoria).trim(), monto, fecha);
-        return sendJson(response, 201, { id: Number(result.lastInsertRowid) });
+        `, [user.id, body.tipo, String(body.categoria).trim(), monto, fecha]);
+        return sendJson(response, 201, { id: result.recordset[0].id });
     }
 
     if (request.method === "PUT" && pathname === "/api/movimientos/snapshot") {
-        const user = requireUser(request, response);
+        const user = await requireUser(request, response);
         if (!user) return;
         const body = await readJson(request);
         const fecha = new Date().toISOString().slice(0, 10);
@@ -207,54 +214,88 @@ async function handleApi(request, response, pathname) {
         const gastos = Array.isArray(body.gastos) ? body.gastos : [];
         const categoriasIngresos = ["Salario", "Acciones", "Otros"];
         const categoriasGastos = ["Alquiler", "Alimento", "Servicios", "Vehículo", "Mantenimiento", "Gasolina", "Ocio"];
-        database.exec("BEGIN");
         try {
-            database.prepare("DELETE FROM movimientos WHERE usuario_id = ? AND fecha = ?").run(user.id, fecha);
-            const insertar = database.prepare(`
-                INSERT INTO movimientos (usuario_id, tipo, categoria, monto, fecha)
-                VALUES (?, ?, ?, ?, ?)
-            `);
-            ingresos.forEach((monto, index) => {
-                if (Number(monto) > 0) insertar.run(user.id, "ingreso", categoriasIngresos[index] || "Otros", Number(monto), fecha);
-            });
-            gastos.forEach((monto, index) => {
-                if (Number(monto) > 0) insertar.run(user.id, "gasto", categoriasGastos[index] || "Otros", Number(monto), fecha);
-            });
-            database.exec("COMMIT");
+            await database.run("DELETE FROM movimientos WHERE usuario_id = ? AND fecha = ?", [user.id, fecha]);
+            for (const [index, monto] of ingresos.entries()) {
+                if (Number(monto) > 0) await database.run("INSERT INTO movimientos (usuario_id, tipo, categoria, monto, fecha) VALUES (?, ?, ?, ?, ?)", [user.id, "ingreso", categoriasIngresos[index] || "Otros", Number(monto), fecha]);
+            }
+            for (const [index, monto] of gastos.entries()) {
+                if (Number(monto) > 0) await database.run("INSERT INTO movimientos (usuario_id, tipo, categoria, monto, fecha) VALUES (?, ?, ?, ?, ?)", [user.id, "gasto", categoriasGastos[index] || "Otros", Number(monto), fecha]);
+            }
         } catch (error) {
-            database.exec("ROLLBACK");
             throw error;
         }
         return sendJson(response, 200, { correcto: true });
     }
 
     if (request.method === "POST" && pathname === "/api/metas") {
-        const user = requireUser(request, response);
+        const user = await requireUser(request, response);
         if (!user) return;
         const body = await readJson(request);
         const objetivo = Number(body.montoObjetivo);
         if (!String(body.nombre || "").trim() || !Number.isFinite(objetivo) || objetivo <= 0) {
             return sendJson(response, 400, { error: "La meta no es válida." });
         }
-        const result = database.prepare(`
+        const result = await database.run(`
             INSERT INTO metas_ahorro (usuario_id, nombre, monto_objetivo, fecha_objetivo)
+            OUTPUT INSERTED.id
             VALUES (?, ?, ?, ?)
-        `).run(user.id, String(body.nombre).trim(), objetivo, body.fechaObjetivo || null);
-        return sendJson(response, 201, { id: Number(result.lastInsertRowid) });
+        `, [user.id, String(body.nombre).trim(), objetivo, body.fechaObjetivo || null]);
+        return sendJson(response, 201, { id: result.recordset[0].id });
     }
 
     if (request.method === "GET" && pathname === "/api/movimientos") {
-        const user = requireUser(request, response);
+        const user = await requireUser(request, response);
         if (!user) return;
-        const movimientos = database.prepare("SELECT id, tipo, categoria, monto, fecha FROM movimientos WHERE usuario_id = ? ORDER BY fecha DESC, id DESC").all(user.id);
+        const movimientos = await database.all("SELECT id, tipo, categoria, monto, fecha FROM movimientos WHERE usuario_id = ? ORDER BY fecha DESC, id DESC", [user.id]);
         return sendJson(response, 200, { movimientos });
     }
 
     if (request.method === "GET" && pathname === "/api/metas") {
-        const user = requireUser(request, response);
+        const user = await requireUser(request, response);
         if (!user) return;
-        const metas = database.prepare("SELECT id, nombre, monto_objetivo, monto_actual, fecha_objetivo FROM metas_ahorro WHERE usuario_id = ? ORDER BY id DESC").all(user.id);
+        const metas = await database.all("SELECT id, nombre, monto_objetivo, monto_actual, fecha_objetivo FROM metas_ahorro WHERE usuario_id = ? ORDER BY id DESC", [user.id]);
         return sendJson(response, 200, { metas });
+    }
+
+    if (request.method === "GET" && pathname === "/api/tarjetas-control") {
+        const user = await requireUser(request, response);
+        if (!user) return;
+        const tarjetas = await database.all(`
+            SELECT id, alias, entidad, limite, dia_corte, dia_pago
+            FROM tarjetas_control WHERE usuario_id = ? ORDER BY dia_pago, id
+        `, [user.id]);
+        return sendJson(response, 200, { tarjetas });
+    }
+
+    if (request.method === "POST" && pathname === "/api/tarjetas-control") {
+        const user = await requireUser(request, response);
+        if (!user) return;
+        const body = await readJson(request);
+        const alias = String(body.alias || "").trim();
+        const entidad = String(body.entidad || "").trim() || null;
+        const limite = Number(body.limite);
+        const diaCorte = Number(body.diaCorte);
+        const diaPago = Number(body.diaPago);
+        if (!alias || alias.length > 80 || !Number.isFinite(limite) || limite < 0 ||
+            !Number.isInteger(diaCorte) || diaCorte < 1 || diaCorte > 31 ||
+            !Number.isInteger(diaPago) || diaPago < 1 || diaPago > 31) {
+            return sendJson(response, 400, { error: "Los datos de la tarjeta de control no son válidos." });
+        }
+        const result = await database.run(`
+            INSERT INTO tarjetas_control (usuario_id, alias, entidad, limite, dia_corte, dia_pago)
+            OUTPUT INSERTED.id VALUES (?, ?, ?, ?, ?, ?)
+        `, [user.id, alias, entidad, limite, diaCorte, diaPago]);
+        return sendJson(response, 201, { id: result.recordset[0].id });
+    }
+
+    if (request.method === "DELETE" && pathname.startsWith("/api/tarjetas-control/")) {
+        const user = await requireUser(request, response);
+        if (!user) return;
+        const id = Number(pathname.split("/").pop());
+        if (!Number.isInteger(id) || id < 1) return sendJson(response, 400, { error: "Tarjeta no válida." });
+        await database.run("DELETE FROM tarjetas_control WHERE id = ? AND usuario_id = ?", [id, user.id]);
+        return sendJson(response, 200, { correcto: true });
     }
 
     sendJson(response, 404, { error: "Ruta no encontrada." });
@@ -283,15 +324,17 @@ const server = http.createServer(async (request, response) => {
 });
 
 async function ensureDefaultUser() {
-    const usuarioDemo = database.prepare("SELECT id FROM usuarios WHERE usuario = ? COLLATE NOCASE").get("admin");
+    const usuarioDemo = await database.get("SELECT id FROM usuarios WHERE usuario = ? COLLATE Latin1_General_100_CI_AS", ["admin"]);
     if (usuarioDemo) return;
-    database.prepare(`
+    await database.run(`
         INSERT INTO usuarios (nombre, usuario, correo, telefono, nacionalidad, password_hash)
+        OUTPUT INSERTED.id
         VALUES (?, ?, ?, ?, ?, ?)
-    `).run("Administrador", "admin", "admin@asvif.local", "00000000", "Nicaragüense", await hashPassword("asvif123"));
+    `, ["Administrador", "admin", "admin@asvif.local", "00000000", "Nicaragua", await hashPassword("asvif123")]);
 }
 
-ensureDefaultUser()
+database.init()
+    .then(() => ensureDefaultUser())
     .then(() => server.listen(PORT, () => console.log(`ASVIF disponible en http://localhost:${PORT}`)))
     .catch((error) => {
         console.error(error);

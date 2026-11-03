@@ -1,7 +1,4 @@
 .DS_Store
-data/*.sqlite
-data/*.sqlite-shm
-data/*.sqlite-wal
 .idea/
 .vscode/
 .DS_Store
