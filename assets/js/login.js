@@ -57,6 +57,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             "Puerto Rico": ["1", "PR"], "República Dominicana": ["1", "DO"], Uruguay: ["598", "UY"],
             Venezuela: ["58", "VE"]
         };
+        const bandera = (iso) => [...iso]
+            .map((letra) => String.fromCodePoint(127397 + letra.charCodeAt(0)))
+            .join("");
         datos.paises.forEach((pais) => {
             selectorPais.add(new Option(pais.nombre, pais.nombre));
             const prefijo = prefijos[pais.nombre];
@@ -69,7 +72,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             opcion.dataset.valor = `+${codigo}`;
             opcion.dataset.iso = iso.toLowerCase();
             opcion.dataset.etiqueta = `${pais.nombre} (+${codigo})`;
-            opcion.innerHTML = `<img src="../assets/img/flags/${iso.toLowerCase()}.svg" alt="${pais.nombre}"> <span>${pais.nombre} (+${codigo})</span>`;
+            opcion.innerHTML = `<span class="prefijo-bandera" aria-hidden="true">${bandera(iso)}</span> <span>${pais.nombre} (+${codigo})</span>`;
             opcion.addEventListener("click", () => seleccionarPrefijo(opcion));
             selectorPrefijoOpciones.append(opcion);
         });
@@ -82,7 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
         function seleccionarPrefijo(opcion) {
             selectorPrefijo.value = opcion.dataset.valor;
-            selectorPrefijoSeleccion.innerHTML = `<img src="../assets/img/flags/${opcion.dataset.iso}.svg" alt=""> <span>${opcion.dataset.etiqueta}</span>`;
+            selectorPrefijoSeleccion.innerHTML = `<span class="prefijo-bandera" aria-hidden="true">${bandera(opcion.dataset.iso.toUpperCase())}</span> <span>${opcion.dataset.etiqueta}</span>`;
             [...selectorPrefijoOpciones.children].forEach((item) => item.setAttribute("aria-selected", String(item === opcion)));
             selectorPrefijoOpciones.classList.remove("abierto");
             selectorPrefijoBoton.setAttribute("aria-expanded", "false");
