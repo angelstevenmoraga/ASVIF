@@ -11,6 +11,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const botonDemo = document.getElementById("btn-demo");
     const selectorPais = document.getElementById("reg-nacionalidad");
     const selectorPrefijo = document.getElementById("reg-prefijo");
+    const selectorPrefijoBoton = document.getElementById("reg-prefijo-boton");
+    const selectorPrefijoSeleccion = document.getElementById("reg-prefijo-seleccion");
+    const selectorPrefijoOpciones = document.getElementById("reg-prefijo-opciones");
     const modalError = document.getElementById("modal-error-acceso");
     const modalAviso = document.getElementById("modal-aviso-registro");
     const modalErrorContenido = modalError.querySelector(".modal-error-contenido");
@@ -54,23 +57,49 @@ document.addEventListener("DOMContentLoaded", async () => {
             "Puerto Rico": ["1", "PR"], "República Dominicana": ["1", "DO"], Uruguay: ["598", "UY"],
             Venezuela: ["58", "VE"]
         };
-        const bandera = (iso) => [...iso]
-            .map((letra) => String.fromCodePoint(127397 + letra.charCodeAt(0)))
-            .join("");
         datos.paises.forEach((pais) => {
             selectorPais.add(new Option(pais.nombre, pais.nombre));
             const prefijo = prefijos[pais.nombre];
             if (!prefijo) return;
             const [codigo, iso] = prefijo;
-            selectorPrefijo.add(new Option(`${bandera(iso)} ${pais.nombre} (+${codigo})`, `+${codigo}`));
+            const opcion = document.createElement("button");
+            opcion.type = "button";
+            opcion.className = "prefijo-opcion";
+            opcion.setAttribute("role", "option");
+            opcion.dataset.valor = `+${codigo}`;
+            opcion.dataset.iso = iso.toLowerCase();
+            opcion.dataset.etiqueta = `${pais.nombre} (+${codigo})`;
+            opcion.innerHTML = `<img src="../assets/img/flags/${iso.toLowerCase()}.svg" alt="${pais.nombre}"> <span>${pais.nombre} (+${codigo})</span>`;
+            opcion.addEventListener("click", () => seleccionarPrefijo(opcion));
+            selectorPrefijoOpciones.append(opcion);
         });
         selectorPais.addEventListener("change", () => {
             const prefijo = prefijos[selectorPais.value];
-            if (prefijo) selectorPrefijo.value = `+${prefijo[0]}`;
+            if (prefijo) {
+                const opcion = [...selectorPrefijoOpciones.children].find((item) => item.dataset.valor === `+${prefijo[0]}` && item.dataset.iso === prefijo[1].toLowerCase());
+                if (opcion) seleccionarPrefijo(opcion);
+            }
+        });
+        function seleccionarPrefijo(opcion) {
+            selectorPrefijo.value = opcion.dataset.valor;
+            selectorPrefijoSeleccion.innerHTML = `<img src="../assets/img/flags/${opcion.dataset.iso}.svg" alt=""> <span>${opcion.dataset.etiqueta}</span>`;
+            [...selectorPrefijoOpciones.children].forEach((item) => item.setAttribute("aria-selected", String(item === opcion)));
+            selectorPrefijoOpciones.classList.remove("abierto");
+            selectorPrefijoBoton.setAttribute("aria-expanded", "false");
+        }
+        selectorPrefijoBoton.addEventListener("click", () => {
+            const abierto = selectorPrefijoOpciones.classList.toggle("abierto");
+            selectorPrefijoBoton.setAttribute("aria-expanded", String(abierto));
+        });
+        document.addEventListener("click", (evento) => {
+            if (!document.getElementById("selector-prefijo").contains(evento.target)) {
+                selectorPrefijoOpciones.classList.remove("abierto");
+                selectorPrefijoBoton.setAttribute("aria-expanded", "false");
+            }
         });
     } catch (error) {
         selectorPais.disabled = true;
-        selectorPrefijo.disabled = true;
+        selectorPrefijoBoton.disabled = true;
         selectorPais.options[0].textContent = "No se pudo cargar la lista";
     }
 

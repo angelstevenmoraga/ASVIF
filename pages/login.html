@@ -73,9 +73,14 @@
                 <div class="campo">
                     <label for="reg-prefijo"><i class="fa-solid fa-phone"></i> Número de teléfono</label>
                     <div class="telefono-grupo">
-                        <select id="reg-prefijo" autocomplete="tel-country-code" aria-label="Prefijo telefónico" required>
-                            <option value="">Prefijo</option>
-                        </select>
+                        <div class="selector-prefijo" id="selector-prefijo">
+                            <button type="button" class="selector-prefijo-boton" id="reg-prefijo-boton" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="selector-prefijo-seleccion" id="reg-prefijo-seleccion">Prefijo</span>
+                                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                            </button>
+                            <div class="selector-prefijo-opciones" id="reg-prefijo-opciones" role="listbox" aria-label="Prefijos telefónicos"></div>
+                            <input type="hidden" id="reg-prefijo" required>
+                        </div>
                         <input type="tel" id="reg-telefono" placeholder="8888 8888" autocomplete="tel-national" maxlength="15" pattern="[0-9][0-9\s().-]{5,14}" required>
                     </div>
                 </div>

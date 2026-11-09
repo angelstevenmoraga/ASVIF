@@ -60,6 +60,16 @@ main.contenedor-auth {
 .telefono-grupo { display: grid; grid-template-columns: minmax(150px, 42%) 1fr; gap: 8px; }
 .telefono-grupo select { min-width: 0; }
 .telefono-grupo input { min-width: 0; }
+.selector-prefijo { position: relative; min-width: 0; }
+.selector-prefijo-boton { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 13px 12px; border: 1px solid var(--borde); border-radius: 12px; background: #fbfdfb; color: var(--texto); font-size: .9rem; text-align: left; }
+.selector-prefijo-boton:hover { background: var(--verde-claro); color: var(--texto); box-shadow: none; transform: none; }
+.selector-prefijo-boton:focus { outline: 3px solid rgba(47, 117, 104, .2); border-color: var(--verde); }
+.selector-prefijo-seleccion { display: flex; align-items: center; gap: 7px; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.selector-prefijo-seleccion img, .prefijo-opcion img { width: 24px; height: 17px; flex: 0 0 auto; object-fit: cover; border-radius: 2px; box-shadow: 0 0 0 1px rgba(20, 50, 45, .12); }
+.selector-prefijo-opciones { position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; right: 0; display: none; max-height: 240px; overflow-y: auto; padding: 5px; border: 1px solid var(--borde); border-radius: 12px; background: var(--blanco); box-shadow: 0 14px 30px rgba(22, 63, 59, .16); }
+.selector-prefijo-opciones.abierto { display: grid; gap: 2px; }
+.prefijo-opcion { display: flex; align-items: center; gap: 8px; width: 100%; padding: 9px 8px; border: 0; border-radius: 8px; background: transparent; color: var(--texto); font-size: .86rem; text-align: left; cursor: pointer; }
+.prefijo-opcion:hover, .prefijo-opcion[aria-selected="true"] { background: var(--verde-claro); color: var(--verde-profundo); }
 .btn-submit { width: 100%; margin-top: 8px; padding: 13px; }
 .btn-demo {
     width: 100%;
@@ -122,7 +132,7 @@ main.contenedor-auth {
     .pestanias { gap: 4px; margin-bottom: 20px; }
     .tab-btn { font-size: .82rem; }
     .telefono-grupo { grid-template-columns: minmax(128px, 45%) 1fr; gap: 6px; }
-    .telefono-grupo select, .telefono-grupo input { padding-left: 10px; padding-right: 10px; }
+    .telefono-grupo input, .selector-prefijo-boton { padding-left: 10px; padding-right: 10px; }
     .modal-error-contenido, .modal-aviso-contenido { padding: 34px 20px 24px; }
     .modal-error-contenido h2, .modal-aviso-contenido h2 { font-size: 1.3rem; }
 }
