@@ -10,6 +10,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const formRegistro = document.getElementById("form-registro");
     const botonDemo = document.getElementById("btn-demo");
     const selectorPais = document.getElementById("reg-nacionalidad");
+    const seccionRecuperacion = document.getElementById("recuperacion-seccion");
+    const botonRecuperacion = document.getElementById("btn-recuperacion");
+    const formRecuperacion = document.getElementById("form-recuperacion");
+    const metodoRecuperacion = document.getElementById("recuperacion-metodo");
+    const contactoRecuperacion = document.getElementById("recuperacion-contacto");
+    const etiquetaContacto = document.getElementById("recuperacion-contacto-label");
     const modalError = document.getElementById("modal-error-acceso");
     const modalAviso = document.getElementById("modal-aviso-registro");
     const modalErrorContenido = modalError.querySelector(".modal-error-contenido");
@@ -74,6 +80,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         tabRegistro.classList.remove("activo");
         formLogin.classList.add("activo");
         formRegistro.classList.remove("activo");
+        seccionRecuperacion.hidden = false;
     });
 
     // Cambiar a Crear Cuenta
@@ -82,6 +89,43 @@ document.addEventListener("DOMContentLoaded", async () => {
         tabLogin.classList.remove("activo");
         formRegistro.classList.add("activo");
         formLogin.classList.remove("activo");
+        seccionRecuperacion.hidden = true;
+    });
+
+    botonRecuperacion.addEventListener("click", () => {
+        const abierto = botonRecuperacion.getAttribute("aria-expanded") === "true";
+        botonRecuperacion.setAttribute("aria-expanded", String(!abierto));
+        formRecuperacion.hidden = abierto;
+        if (!abierto) metodoRecuperacion.focus();
+    });
+
+    metodoRecuperacion.addEventListener("change", () => {
+        const usaTelefono = metodoRecuperacion.value === "telefono";
+        etiquetaContacto.innerHTML = usaTelefono
+            ? '<i class="fa-solid fa-phone"></i> Número de teléfono'
+            : '<i class="fa-solid fa-envelope"></i> Correo electrónico';
+        contactoRecuperacion.type = usaTelefono ? "tel" : "email";
+        contactoRecuperacion.placeholder = usaTelefono ? "+505 8888 8888" : "correo@ejemplo.com";
+        contactoRecuperacion.autocomplete = usaTelefono ? "tel" : "email";
+        contactoRecuperacion.pattern = usaTelefono ? "[+]?[0-9][0-9\\s().-]{6,19}" : "";
+        contactoRecuperacion.value = "";
+        contactoRecuperacion.focus();
+    });
+
+    formRecuperacion.addEventListener("submit", (evento) => {
+        evento.preventDefault();
+        const campoInvalido = [metodoRecuperacion, contactoRecuperacion].find((campo) => !campo.checkValidity());
+        if (campoInvalido) {
+            campoInvalido.reportValidity();
+            mostrarAvisoRegistro("Revisa tus datos", campoInvalido.validationMessage, false, "AVISO DE RECUPERACIÓN");
+            campoInvalido.focus();
+            return;
+        }
+
+        mostrarAvisoRegistro("Recuperación preparada", "El método seleccionado quedó configurado. La solicitud se podrá enviar cuando se conecte el servicio de recuperación.", true, "CONFIGURACIÓN COMPLETA");
+        formRecuperacion.reset();
+        metodoRecuperacion.dispatchEvent(new Event("change"));
+        botonRecuperacion.click();
     });
 
     formLogin.addEventListener("submit", async (e) => {

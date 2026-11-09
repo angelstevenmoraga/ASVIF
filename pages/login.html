@@ -53,6 +53,33 @@
                 </p>
             </form>
 
+            <section class="recuperacion-seccion" id="recuperacion-seccion" aria-labelledby="titulo-recuperacion">
+                <button type="button" class="enlace-recuperacion" id="btn-recuperacion" aria-expanded="false" aria-controls="form-recuperacion">
+                    <i class="fa-solid fa-key"></i> ¿Olvidaste tu contraseña?
+                </button>
+                <form id="form-recuperacion" class="form-recuperacion" hidden>
+                    <div class="recuperacion-cabecera">
+                        <p class="recuperacion-etiqueta">RECUPERACIÓN DE CUENTA</p>
+                        <h2 id="titulo-recuperacion">Recupera tu acceso</h2>
+                        <p>Selecciona cómo te gustaría recibir las instrucciones para recuperar tu cuenta.</p>
+                    </div>
+                    <div class="campo">
+                        <label for="recuperacion-metodo"><i class="fa-solid fa-route"></i> Método de recuperación</label>
+                        <select id="recuperacion-metodo" required>
+                            <option value="">Selecciona un método</option>
+                            <option value="correo">Correo electrónico</option>
+                            <option value="telefono">Número de teléfono</option>
+                        </select>
+                    </div>
+                    <div class="campo">
+                        <label for="recuperacion-contacto" id="recuperacion-contacto-label"><i class="fa-solid fa-address-card"></i> Dato de contacto</label>
+                        <input type="email" id="recuperacion-contacto" placeholder="correo@ejemplo.com" maxlength="120" autocomplete="email" required>
+                    </div>
+                    <button type="submit" class="btn-submit"><i class="fa-solid fa-paper-plane"></i> Solicitar recuperación</button>
+                    <p class="recuperacion-nota"><i class="fa-solid fa-circle-info"></i> Este servicio estará disponible cuando se conecte el sistema de recuperación.</p>
+                </form>
+            </section>
+
             <!-- FORMULARIO DE REGISTRO -->
             <form id="form-registro" class="form-box">
                 <div class="campo">
