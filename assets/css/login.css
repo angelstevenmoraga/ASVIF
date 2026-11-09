@@ -57,6 +57,9 @@ main.contenedor-auth {
 
 .campo input:focus, .campo select:focus { outline: 3px solid rgba(47, 117, 104, .2); border-color: var(--verde); }
 .campo select { width: 100%; padding: 13px 14px; border: 1px solid var(--borde); border-radius: 12px; background: #fbfdfb; color: var(--texto); font-size: 1rem; }
+.telefono-grupo { display: grid; grid-template-columns: minmax(150px, 42%) 1fr; gap: 8px; }
+.telefono-grupo select { min-width: 0; }
+.telefono-grupo input { min-width: 0; }
 .btn-submit { width: 100%; margin-top: 8px; padding: 13px; }
 .btn-demo {
     width: 100%;
@@ -118,6 +121,8 @@ main.contenedor-auth {
     .logo-auth h2 { font-size: 1.1rem; }
     .pestanias { gap: 4px; margin-bottom: 20px; }
     .tab-btn { font-size: .82rem; }
+    .telefono-grupo { grid-template-columns: minmax(128px, 45%) 1fr; gap: 6px; }
+    .telefono-grupo select, .telefono-grupo input { padding-left: 10px; padding-right: 10px; }
     .modal-error-contenido, .modal-aviso-contenido { padding: 34px 20px 24px; }
     .modal-error-contenido h2, .modal-aviso-contenido h2 { font-size: 1.3rem; }
 }
