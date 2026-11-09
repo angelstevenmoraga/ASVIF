@@ -70,7 +70,7 @@ async function getCurrentUser(request) {
     const session = await database.get(`
         SELECT usuarios.id, usuarios.nombre, usuarios.usuario, usuarios.correo, usuarios.telefono, usuarios.nacionalidad
         FROM sesiones JOIN usuarios ON usuarios.id = sesiones.usuario_id
-        WHERE sesiones.token_hash = ? AND sesiones.expira_en > SYSUTCDATETIME()
+        WHERE sesiones.token_hash = ? AND sesiones.expira_en > NOW()
     `, [hashToken(token)]);
     return session || null;
 }
@@ -114,8 +114,8 @@ async function handleApi(request, response, pathname) {
             const passwordHash = await hashPassword(body.password);
             const result = await database.run(`
                 INSERT INTO usuarios (nombre, usuario, correo, telefono, nacionalidad, password_hash)
-                OUTPUT INSERTED.id
                 VALUES (?, ?, ?, ?, ?, ?)
+                RETURNING id
             `, [body.nombre.trim(), body.usuario.trim(), body.correo.trim().toLowerCase(), body.telefono.trim(), body.nacionalidad.trim(), passwordHash]);
             return sendJson(response, 201, { id: result.recordset[0].id, mensaje: "Cuenta creada." });
         } catch (error) {
@@ -126,7 +126,7 @@ async function handleApi(request, response, pathname) {
 
     if (request.method === "POST" && pathname === "/api/auth/login") {
         const body = await readJson(request);
-        const user = await database.get("SELECT * FROM usuarios WHERE usuario = ? COLLATE Latin1_General_100_CI_AS", [String(body.usuario || "").trim()]);
+        const user = await database.get("SELECT * FROM usuarios WHERE LOWER(usuario) = LOWER(?)", [String(body.usuario || "").trim()]);
         if (!user || !(await verifyPassword(String(body.password || ""), user.password_hash))) {
             return sendJson(response, 401, { error: "Usuario o contraseña incorrectos." });
         }
@@ -199,8 +199,8 @@ async function handleApi(request, response, pathname) {
         const fecha = /^\d{4}-\d{2}-\d{2}$/.test(String(body.fecha || "")) ? body.fecha : new Date().toISOString().slice(0, 10);
         const result = await database.run(`
             INSERT INTO movimientos (usuario_id, tipo, categoria, monto, fecha)
-            OUTPUT INSERTED.id
             VALUES (?, ?, ?, ?, ?)
+            RETURNING id
         `, [user.id, body.tipo, String(body.categoria).trim(), monto, fecha]);
         return sendJson(response, 201, { id: result.recordset[0].id });
     }
@@ -238,8 +238,8 @@ async function handleApi(request, response, pathname) {
         }
         const result = await database.run(`
             INSERT INTO metas_ahorro (usuario_id, nombre, monto_objetivo, fecha_objetivo)
-            OUTPUT INSERTED.id
             VALUES (?, ?, ?, ?)
+            RETURNING id
         `, [user.id, String(body.nombre).trim(), objetivo, body.fechaObjetivo || null]);
         return sendJson(response, 201, { id: result.recordset[0].id });
     }
@@ -284,7 +284,7 @@ async function handleApi(request, response, pathname) {
         }
         const result = await database.run(`
             INSERT INTO tarjetas_control (usuario_id, alias, entidad, limite, dia_corte, dia_pago)
-            OUTPUT INSERTED.id VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?) RETURNING id
         `, [user.id, alias, entidad, limite, diaCorte, diaPago]);
         return sendJson(response, 201, { id: result.recordset[0].id });
     }
@@ -324,12 +324,12 @@ const server = http.createServer(async (request, response) => {
 });
 
 async function ensureDefaultUser() {
-    const usuarioDemo = await database.get("SELECT id FROM usuarios WHERE usuario = ? COLLATE Latin1_General_100_CI_AS", ["admin"]);
+    const usuarioDemo = await database.get("SELECT id FROM usuarios WHERE LOWER(usuario) = LOWER(?)", ["admin"]);
     if (usuarioDemo) return;
     await database.run(`
         INSERT INTO usuarios (nombre, usuario, correo, telefono, nacionalidad, password_hash)
-        OUTPUT INSERTED.id
         VALUES (?, ?, ?, ?, ?, ?)
+        RETURNING id
     `, ["Administrador", "admin", "admin@asvif.local", "00000000", "Nicaragua", await hashPassword("asvif123")]);
 }
 
