@@ -1,0 +1,36 @@
+@import url("index.css");
+
+.presupuesto { padding-bottom: 80px; }
+.presupuesto-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 24px; margin-top: 24px; }
+.presupuesto-formulario, .presupuesto-resultados, .emergencia { border: 1px solid var(--borde); border-radius: 22px; background: var(--blanco); box-shadow: 0 16px 35px rgba(22, 63, 59, .08); }
+.presupuesto-formulario { padding: clamp(22px, 4vw, 34px); }
+.presupuesto h1, .presupuesto h2 { color: var(--verde-profundo); }
+.presupuesto-formulario h2, .presupuesto-resultados h2, .emergencia h2 { margin: 0; font-size: 1.45rem; }
+.descripcion, .emergencia > div > p:last-child { color: var(--texto-suave); line-height: 1.5; }
+.presupuesto-formulario form, .emergencia form { display: grid; gap: 14px; margin-top: 22px; }
+.presupuesto label { display: grid; gap: 6px; color: var(--texto); font-weight: 600; }
+.presupuesto label span { color: var(--texto-suave); font-size: .82rem; font-weight: 500; }
+.presupuesto input { width: 100%; padding: 12px 13px; border: 1px solid var(--borde); border-radius: 11px; background: #fbfdfb; color: var(--texto); font-size: 1rem; }
+.presupuesto input:focus { outline: 3px solid rgba(47, 117, 104, .2); border-color: var(--verde); }
+.presupuesto button { border: 0; border-radius: 10px; padding: 12px 16px; background: var(--verde-profundo); color: var(--blanco); font-weight: 700; cursor: pointer; }
+.presupuesto button:hover { background: var(--verde); }
+.mensaje-formulario { margin: 14px 0 0; color: #b94a3b; }
+.presupuesto-resultados { padding: clamp(22px, 4vw, 34px); background: #f5faf6; }
+.resultado-cabecera { display: flex; justify-content: space-between; align-items: flex-start; }
+.resultado-cabecera > i { color: var(--dorado); font-size: 1.55rem; }
+.resultado-total { display: flex; justify-content: space-between; gap: 18px; align-items: baseline; margin: 28px 0 16px; color: var(--texto-suave); }
+.resultado-total strong { color: var(--verde-profundo); font-size: 1.35rem; }
+.barra-presupuesto { display: flex; height: 18px; overflow: hidden; border-radius: 99px; background: var(--verde-claro); }
+.barra-presupuesto span { width: 0; transition: width .45s ease; }
+#barraNecesarios { background: var(--verde-profundo); } #barraPersonales { background: var(--dorado); } #barraAhorro { background: #8dbbaa; }
+.leyenda-presupuesto { display: grid; gap: 10px; margin-top: 18px; color: var(--texto); font-size: .9rem; }
+.leyenda-presupuesto span { display: flex; align-items: center; gap: 7px; }
+.leyenda-presupuesto i { width: 11px; height: 11px; border-radius: 50%; } .leyenda-presupuesto .necesarios { background: var(--verde-profundo); } .leyenda-presupuesto .personales { background: var(--dorado); } .leyenda-presupuesto .ahorro { background: #8dbbaa; }
+.leyenda-presupuesto strong { margin-left: auto; color: var(--verde-profundo); }
+.consejo { margin: 22px 0 0; padding: 13px 15px; border-left: 4px solid var(--dorado); border-radius: 8px; background: var(--blanco); color: var(--texto); line-height: 1.5; }
+.emergencia { display: grid; grid-template-columns: 1fr 1.2fr; gap: 28px; align-items: center; margin-top: 24px; padding: clamp(22px, 4vw, 34px); }
+.emergencia form { grid-template-columns: 1fr 1fr; margin-top: 0; } .emergencia form button { grid-column: 1 / -1; }
+.resultado-emergencia { grid-column: 1 / -1; margin: 0; padding: 14px; border-radius: 10px; background: var(--verde-claro); color: var(--verde-profundo); font-weight: 700; }
+.presupuesto [hidden] { display: none; }
+@media (max-width: 800px) { .presupuesto-grid, .emergencia { grid-template-columns: 1fr; } .emergencia form { grid-template-columns: 1fr; } .emergencia form button { grid-column: auto; } }
+@media (max-width: 480px) { .resultado-total { display: grid; gap: 5px; } .presupuesto-formulario, .presupuesto-resultados, .emergencia { border-radius: 17px; } }

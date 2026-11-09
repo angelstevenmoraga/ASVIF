@@ -79,6 +79,18 @@ main.contenedor-auth {
 .credenciales-demo { color: var(--texto-suave); font-size: .86rem; text-align: center; margin: 3px 0 0; }
 .credenciales-demo strong { color: var(--verde); }
 .mensaje-formulario { margin: 0; font-weight: 600; }
+.recuperacion-seccion { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--borde); }
+.enlace-recuperacion { display: block; width: 100%; padding: 4px; background: transparent; color: var(--verde); font-size: .9rem; box-shadow: none; }
+.enlace-recuperacion:hover { background: transparent; color: var(--verde-profundo); box-shadow: none; transform: none; }
+.enlace-recuperacion i { margin-right: 5px; }
+.form-recuperacion { display: flex; flex-direction: column; gap: 16px; margin-top: 18px; padding: 18px; border: 1px solid var(--borde); border-radius: 18px; background: #f7fbf8; }
+.form-recuperacion[hidden], .recuperacion-seccion[hidden] { display: none; }
+.recuperacion-cabecera { text-align: center; }
+.recuperacion-cabecera p:last-child { margin: 7px 0 0; color: var(--texto-suave); font-size: .86rem; line-height: 1.45; }
+.recuperacion-cabecera h2 { margin: 0; color: var(--verde-profundo); font-size: 1.18rem; }
+.recuperacion-etiqueta { margin: 0 0 6px; color: var(--verde); font: 800 .66rem "Manrope", sans-serif; letter-spacing: .12em; }
+.recuperacion-nota { margin: -4px 0 0; color: var(--texto-suave); font-size: .78rem; line-height: 1.4; text-align: center; }
+.recuperacion-nota i { color: var(--verde); margin-right: 4px; }
 
 .modal-error-abierto { overflow: hidden; }
 .modal-error-acceso[hidden] { display: none; }

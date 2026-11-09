@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Planificador de presupuesto | ASVIF</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/presupuesto.css">
+</head>
+<body class="pagina-protegida pagina-dashboard" data-protegida="true">
+    <header class="dashboard-topbar">
+        <a class="dashboard-logo" href="panel.html"><img src="../assets/img/asvif123_Letras_Logo.png" alt="Logotipo de ASVIF"></a>
+        <a class="perfil-usuario" href="perfil.html" aria-label="Abrir perfil de usuario"><i class="fa-solid fa-circle-user"></i></a>
+    </header>
+    <aside id="panel-navegacion" class="panel-lateral sidebar" aria-label="Panel de navegación">
+        <span class="panel-etiqueta">Panel de control</span>
+        <a href="panel.html"><i class="fa-solid fa-house"></i>Inicio</a>
+        <span class="panel-etiqueta">Herramientas</span>
+        <a href="ingresos-gastos.html"><i class="fa-solid fa-chart-pie"></i>Ingresos y gastos</a>
+        <a href="ahorro.html"><i class="fa-solid fa-piggy-bank"></i>Plan de ahorro</a>
+        <a href="punto-equilibrio.html"><i class="fa-solid fa-scale-balanced"></i>Punto de equilibrio</a>
+        <a href="presupuesto.html" class="activo"><i class="fa-solid fa-wallet"></i>Presupuesto</a>
+        <a href="conversor-moneda.html"><i class="fa-solid fa-money-bill-transfer"></i>Conversor de monedas</a>
+        <div class="panel-espaciador"></div>
+        <button type="button" class="panel-salir" data-cerrar-sesion><i class="fa-solid fa-right-from-bracket"></i>Cerrar sesión</button>
+    </aside>
+
+    <main class="pagina-modulo main-content presupuesto">
+        <section class="encabezado-modulo bloque-revelar">
+            <div>
+                <span class="etiqueta">PLANIFICACIÓN</span>
+                <h1>Planificador de presupuesto</h1>
+                <p>Distribuye tus ingresos con una guía sencilla y descubre cuánto necesitas para estar preparado.</p>
+            </div>
+            <span class="icono-modulo"><i class="fa-solid fa-wallet"></i></span>
+        </section>
+
+        <div class="presupuesto-grid">
+            <section class="presupuesto-formulario bloque-revelar" aria-labelledby="titulo-presupuesto">
+                <p class="etiqueta">REGLA 50 / 30 / 20</p>
+                <h2 id="titulo-presupuesto">Organiza tu ingreso mensual</h2>
+                <p class="descripcion">Compara tus gastos reales con una distribución de referencia.</p>
+                <form id="formularioPresupuesto">
+                    <label for="ingresoMensual">Ingreso mensual <span>C$</span><input id="ingresoMensual" type="number" min="0.01" max="1000000000" step="0.01" placeholder="20000" required></label>
+                    <label for="gastosNecesarios">Gastos necesarios <span>C$</span><input id="gastosNecesarios" type="number" min="0" max="1000000000" step="0.01" placeholder="10000" required></label>
+                    <label for="gastosPersonales">Gastos personales <span>C$</span><input id="gastosPersonales" type="number" min="0" max="1000000000" step="0.01" placeholder="5000" required></label>
+                    <label for="ahorroMensual">Ahorro y deudas <span>C$</span><input id="ahorroMensual" type="number" min="0" max="1000000000" step="0.01" placeholder="4000" required></label>
+                    <button type="submit">Analizar presupuesto <i class="fa-solid fa-arrow-right"></i></button>
+                </form>
+                <p id="mensajePresupuesto" class="mensaje-formulario" role="alert" hidden></p>
+            </section>
+
+            <section class="presupuesto-resultados bloque-revelar" id="resultadoPresupuesto" aria-live="polite" hidden>
+                <div class="resultado-cabecera"><div><p class="etiqueta">TU DISTRIBUCIÓN</p><h2>Panorama mensual</h2></div><i class="fa-solid fa-chart-simple"></i></div>
+                <div class="resultado-total"><span>Ingreso disponible</span><strong id="resultadoIngreso">C$ 0.00</strong></div>
+                <div class="barra-presupuesto" aria-label="Distribución del presupuesto"><span id="barraNecesarios"></span><span id="barraPersonales"></span><span id="barraAhorro"></span></div>
+                <div class="leyenda-presupuesto"><span><i class="necesarios"></i>Necesarios <strong id="porcentajeNecesarios">0%</strong></span><span><i class="personales"></i>Personales <strong id="porcentajePersonales">0%</strong></span><span><i class="ahorro"></i>Ahorro/deudas <strong id="porcentajeAhorro">0%</strong></span></div>
+                <p id="consejoPresupuesto" class="consejo"></p>
+            </section>
+        </div>
+
+        <section class="emergencia bloque-revelar" aria-labelledby="titulo-emergencia">
+            <div><p class="etiqueta">RED DE SEGURIDAD</p><h2 id="titulo-emergencia">Calcula tu fondo de emergencia</h2><p>Estima una reserva para cubrir tus gastos esenciales durante varios meses.</p></div>
+            <form id="formularioEmergencia">
+                <label for="gastosEmergencia">Gastos esenciales mensuales <span>C$</span><input id="gastosEmergencia" type="number" min="0.01" max="1000000000" step="0.01" placeholder="10000" required></label>
+                <label for="mesesEmergencia">Meses de respaldo<input id="mesesEmergencia" type="number" min="1" max="24" step="1" value="3" required></label>
+                <button type="submit">Calcular fondo <i class="fa-solid fa-calculator"></i></button>
+            </form>
+            <p id="resultadoEmergencia" class="resultado-emergencia" aria-live="polite">Ingresa tus datos para conocer una meta de referencia.</p>
+        </section>
+    </main>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/presupuesto.js"></script>
+    <script src="../assets/js/modulos.js"></script>
+</body>
+</html>
