@@ -95,4 +95,4 @@ jobs:
         with:
           project_id: ${{ vars.NEON_PROJECT_ID }}
           branch: preview/pr-${{ github.event.number }}-${{ needs.setup.outputs.branch }}
-          api_key: ${{ secrets.ASVIF}}
+          api_key: ${{ secrets.NEON_API_KEY }}
