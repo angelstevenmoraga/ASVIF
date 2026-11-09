@@ -48,25 +48,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         const prefijos = {
             Argentina: ["54", "AR"], Bolivia: ["591", "BO"], Brasil: ["55", "BR"], Canadá: ["1", "CA"],
             Chile: ["56", "CL"], Colombia: ["57", "CO"], "Costa Rica": ["506", "CR"], Cuba: ["53", "CU"],
-            Ecuador: ["593", "EC"], "El Salvador": ["503", "SV"], España: ["34", "ES"],
-            "Estados Unidos": ["1", "US"], Guatemala: ["502", "GT"], Honduras: ["504", "HN"],
-            México: ["52", "MX"], Nicaragua: ["505", "NI"], Panamá: ["507", "PA"], Paraguay: ["595", "PY"],
-            Perú: ["51", "PE"], "Puerto Rico": ["1", "PR"], "República Dominicana": ["1", "DO"],
-            Uruguay: ["598", "UY"], Venezuela: ["58", "VE"], Alemania: ["49", "DE"], Australia: ["61", "AU"],
-            China: ["86", "CN"], "Corea del Sur": ["82", "KR"], Egipto: ["20", "EG"], Francia: ["33", "FR"],
-            India: ["91", "IN"], Indonesia: ["62", "ID"], Italia: ["39", "IT"], Japón: ["81", "JP"],
-            Marruecos: ["212", "MA"], Noruega: ["47", "NO"], "Nueva Zelanda": ["64", "NZ"],
-            "Países Bajos": ["31", "NL"], Portugal: ["351", "PT"], "Reino Unido": ["44", "GB"],
-            Rusia: ["7", "RU"], "Sudáfrica": ["27", "ZA"], Suecia: ["46", "SE"], Suiza: ["41", "CH"],
-            Turquía: ["90", "TR"]
+            Ecuador: ["593", "EC"], "El Salvador": ["503", "SV"], "Estados Unidos": ["1", "US"],
+            Guatemala: ["502", "GT"], Honduras: ["504", "HN"], México: ["52", "MX"],
+            Nicaragua: ["505", "NI"], Panamá: ["507", "PA"], Paraguay: ["595", "PY"], Perú: ["51", "PE"],
+            "Puerto Rico": ["1", "PR"], "República Dominicana": ["1", "DO"], Uruguay: ["598", "UY"],
+            Venezuela: ["58", "VE"]
         };
+        const bandera = (iso) => [...iso]
+            .map((letra) => String.fromCodePoint(127397 + letra.charCodeAt(0)))
+            .join("");
         datos.paises.forEach((pais) => {
             selectorPais.add(new Option(pais.nombre, pais.nombre));
             const prefijo = prefijos[pais.nombre];
             if (!prefijo) return;
             const [codigo, iso] = prefijo;
-            const bandera = [...iso].map((letra) => String.fromCodePoint(127397 + letra.charCodeAt(0))).join("");
-            selectorPrefijo.add(new Option(`${bandera} ${pais.nombre} (+${codigo})`, `+${codigo}`));
+            selectorPrefijo.add(new Option(`${bandera(iso)} ${pais.nombre} (+${codigo})`, `+${codigo}`));
         });
         selectorPais.addEventListener("change", () => {
             const prefijo = prefijos[selectorPais.value];
