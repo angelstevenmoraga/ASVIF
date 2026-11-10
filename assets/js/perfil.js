@@ -49,17 +49,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     async function cargarControlFinanciero() {
-        const [movimientosData, tarjetasData] = await Promise.all([
+        const [movimientosData, tarjetasData, resumen] = await Promise.all([
             solicitarApi("/api/movimientos"),
-            solicitarApi("/api/tarjetas-control")
+            solicitarApi("/api/tarjetas-control"),
+            solicitarApi("/api/dashboard/summary")
         ]);
         const movimientos = movimientosData.movimientos;
-        const ingresos = movimientos.filter((item) => item.tipo === "ingreso").reduce((total, item) => total + Number(item.monto), 0);
-        const gastos = movimientos.filter((item) => item.tipo === "gasto").reduce((total, item) => total + Number(item.monto), 0);
-        const datosPerfil = await solicitarApi("/api/auth/me").catch(() => ({ usuario: {} }));
+        const ingresos = Number(resumen.ingresos);
+        const gastos = Number(resumen.gastos);
         const dinero = new Intl.NumberFormat("es", {
             style: "currency",
-            currency: datosPerfil.usuario.moneda_local || "USD"
+            currency: resumen.moneda || "USD"
         });
         document.getElementById("controlIngresos").textContent = dinero.format(ingresos);
         document.getElementById("controlGastos").textContent = dinero.format(gastos);
