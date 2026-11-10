@@ -9,20 +9,6 @@ const PORT = Number(process.env.PORT) || 3000;
 const ROOT = __dirname;
 const scrypt = promisify(crypto.scrypt);
 const sessions = new Map();
-const MEXICO_STATES = {
-    "Aguascalientes": ["Centro", 1], "Baja California": ["Noroeste", 2], "Baja California Sur": ["Noroeste", 3],
-    "Campeche": ["Sureste", 4], "Chiapas": ["Sureste", 7], "Chihuahua": ["Noroeste", 8],
-    "Ciudad de México": ["Centro", 9], "Coahuila": ["Noreste", 5], "Colima": ["Occidente", 6],
-    "Durango": ["Noroeste", 10], "Guanajuato": ["Centro", 11], "Guerrero": ["Centro", 12],
-    "Hidalgo": ["Centro", 13], "Jalisco": ["Occidente", 14], "México": ["Centro", 15],
-    "Michoacán": ["Occidente", 16], "Morelos": ["Centro", 17], "Nayarit": ["Occidente", 18],
-    "Nuevo León": ["Noreste", 19], "Oaxaca": ["Sureste", 20], "Puebla": ["Centro", 21],
-    "Querétaro": ["Centro", 22], "Quintana Roo": ["Sureste", 23], "San Luis Potosí": ["Noreste", 24],
-    "Sinaloa": ["Noroeste", 25], "Sonora": ["Noroeste", 26], "Tabasco": ["Sureste", 27],
-    "Tamaulipas": ["Noreste", 28], "Tlaxcala": ["Centro", 29], "Veracruz": ["Sureste", 30],
-    "Yucatán": ["Sureste", 31], "Zacatecas": ["Noroeste", 32]
-};
-
 function normalizeUsernameBase(name) {
     return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
 }
@@ -132,11 +118,6 @@ async function handleApi(request, response, pathname) {
         }
         const pais = await database.get("SELECT id FROM paises WHERE nombre = ?", [body.nacionalidad.trim()]);
         if (!pais) return sendJson(response, 400, { error: "Selecciona un país válido de la lista." });
-        const estado = body.nacionalidad.trim() === "México" ? String(body.estado || "").trim() : null;
-        if (body.nacionalidad.trim() === "México" && !MEXICO_STATES[estado]) {
-            return sendJson(response, 400, { error: "Selecciona un estado válido de México." });
-        }
-        const [region, regionNumero] = estado ? MEXICO_STATES[estado] : [null, null];
         if (body.password.length < 8 || body.password.length > 72 || !/[A-Za-z]/.test(body.password) || !/\d/.test(body.password)) {
             return sendJson(response, 400, { error: "La contraseña debe tener 8-72 caracteres, una letra y un número." });
         }
@@ -144,10 +125,10 @@ async function handleApi(request, response, pathname) {
             const passwordHash = await hashPassword(body.password);
             const usuario = await generateUsername(body.nombre.trim());
             const result = await database.run(`
-                INSERT INTO usuarios (nombre, usuario, correo, telefono, nacionalidad, estado, region, region_numero, password_hash)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO usuarios (nombre, usuario, correo, telefono, nacionalidad, password_hash)
+                VALUES (?, ?, ?, ?, ?, ?)
                 RETURNING id
-            `, [body.nombre.trim(), usuario, body.correo.trim().toLowerCase(), body.telefono.trim(), body.nacionalidad.trim(), estado, region, regionNumero, passwordHash]);
+            `, [body.nombre.trim(), usuario, body.correo.trim().toLowerCase(), body.telefono.trim(), body.nacionalidad.trim(), passwordHash]);
             return sendJson(response, 201, { id: result.recordset[0].id, usuario, mensaje: "Cuenta creada." });
         } catch (error) {
             if (String(error.message).includes("UNIQUE")) return sendJson(response, 409, { error: "El usuario o correo ya está registrado." });
