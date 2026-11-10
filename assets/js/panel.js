@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         metas: document.querySelector("[data-resumen-metas]"),
         salario: document.querySelector("[data-resumen-salario]"),
         salarioUsd: document.querySelector("[data-resumen-salario-usd]")
+        , disponible: document.querySelector("[data-resumen-disponible]")
     };
     let formatoMoneda = new Intl.NumberFormat("es-NI", {
         style: "currency",
@@ -28,6 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         formatoMoneda = new Intl.NumberFormat("es", { style: "currency", currency: moneda });
         elementos.salario.textContent = formatoMoneda.format(Number(perfil.usuario.salario_local));
         elementos.salarioUsd.textContent = `≈ $${Number(perfil.usuario.salario_usd).toFixed(2)} USD`;
+        elementos.disponible.textContent = formatoMoneda.format(Number(resumen.disponibleMensual));
         if (bienvenida) bienvenida.textContent = `Hola, ${perfil.usuario.nombre}. Revisa tu panorama financiero.`;
         elementos.ingresos.textContent = formatoMoneda.format(resumen.ingresos);
         elementos.gastos.textContent = formatoMoneda.format(resumen.gastos);

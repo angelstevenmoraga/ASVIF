@@ -13,6 +13,8 @@
 .perfil-formulario label { color: var(--texto); font-weight: 700; }
 .perfil-formulario input, .perfil-formulario select { display: block; width: 100%; margin-top: 8px; padding: 12px; border: 1px solid var(--borde); border-radius: 10px; font: inherit; background: var(--blanco); }
 .perfil-formulario input[readonly] { background: #edf3ef; color: var(--texto-suave); }
+.perfil-formulario .opcion-configuracion { display: flex; align-items: center; gap: 10px; grid-column: 1 / -1; color: var(--texto-suave); font-size: .92rem; }
+.perfil-formulario .opcion-configuracion input { width: auto; margin: 0; accent-color: var(--verde); }
 .perfil-formulario button { grid-column: 1 / -1; justify-self: start; }
 #mensajePerfil { grid-column: 1 / -1; margin: 0; color: var(--verde); font-weight: 700; }
 .control-financiero { margin-top: 28px; padding: 28px; border: 1px solid var(--borde); border-radius: 20px; background: var(--blanco); box-shadow: 0 12px 30px rgba(22,63,59,.08); }

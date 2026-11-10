@@ -84,7 +84,8 @@ async function getCurrentUser(request) {
     if (!token) return null;
     const session = await database.get(`
         SELECT usuarios.id, usuarios.nombre, usuarios.usuario, usuarios.correo, usuarios.telefono, usuarios.nacionalidad,
-               usuarios.profesion, usuarios.salario_local, usuarios.moneda_local, usuarios.salario_usd
+               usuarios.profesion, usuarios.salario_local, usuarios.moneda_local, usuarios.salario_usd,
+               usuarios.ingreso_recurrente
         FROM sesiones JOIN usuarios ON usuarios.id = sesiones.usuario_id
         WHERE sesiones.token_hash = ? AND sesiones.expira_en > NOW()
     `, [hashToken(token)]);
@@ -151,6 +152,7 @@ async function handleApi(request, response, pathname) {
             usuario: {
                 nombre: user.nombre, usuario: user.usuario, correo: user.correo,
                 perfilCompleto: user.usuario === "admin" || Boolean(user.profesion && user.salario_local && user.moneda_local)
+                , ingresoRecurrente: user.ingreso_recurrente
             }
         });
     }
@@ -248,12 +250,11 @@ async function handleApi(request, response, pathname) {
         const body = await readJson(request);
         const nombre = String(body.nombre || "").trim();
         const telefono = String(body.telefono || "").trim();
-        const nacionalidad = String(body.nacionalidad || "").trim();
-        const pais = await database.get("SELECT id FROM paises WHERE nombre = ?", [nacionalidad]);
-        if (nombre.length < 2 || telefono.length < 7 || !pais) {
+        const ingresoRecurrente = body.ingresoRecurrente !== false;
+        if (nombre.length < 2 || telefono.length < 7) {
             return sendJson(response, 400, { error: "Completa los datos del perfil." });
         }
-        await database.run("UPDATE usuarios SET nombre = ?, telefono = ?, nacionalidad = ? WHERE id = ?", [nombre, telefono, nacionalidad, user.id]);
+        await database.run("UPDATE usuarios SET nombre = ?, telefono = ?, ingreso_recurrente = ? WHERE id = ?", [nombre, telefono, ingresoRecurrente, user.id]);
         return sendJson(response, 200, { correcto: true });
     }
 
@@ -268,6 +269,10 @@ async function handleApi(request, response, pathname) {
             FROM movimientos
             WHERE usuario_id = ?
         `, [user.id]);
+        const salarioBase = user.salario_local && user.ingreso_recurrente ? Number(user.salario_local) : 0;
+        const ingresosRegistrados = Number(resumen.ingresos);
+        const gastosRegistrados = Number(resumen.gastos);
+        const ingresosTotales = ingresosRegistrados + salarioBase;
         const metas = await database.get(`
             SELECT COUNT(*) AS cantidad,
                 COALESCE(SUM(monto_objetivo), 0) AS objetivo,
@@ -276,9 +281,13 @@ async function handleApi(request, response, pathname) {
             WHERE usuario_id = ?
         `, [user.id]);
         return sendJson(response, 200, {
-            ingresos: resumen.ingresos,
-            gastos: resumen.gastos,
-            saldo: resumen.ingresos - resumen.gastos,
+            ingresos: ingresosTotales,
+            gastos: gastosRegistrados,
+            saldo: ingresosTotales - gastosRegistrados,
+            salarioBase,
+            disponibleMensual: salarioBase - gastosRegistrados,
+            moneda: user.moneda_local || "USD",
+            ingresoRecurrente: Boolean(user.ingreso_recurrente),
             movimientos: resumen.movimientos,
             metas
         });

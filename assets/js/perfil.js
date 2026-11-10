@@ -1,19 +1,18 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const formulario = document.getElementById("formularioPerfil");
     const mensaje = document.getElementById("mensajePerfil");
-    const selectorPais = document.getElementById("perfilNacionalidad");
+    const ingresoRecurrente = document.getElementById("perfilIngresoRecurrente");
     const formularioTarjeta = document.getElementById("formularioTarjeta");
     const listaTarjetas = document.getElementById("listaTarjetas");
     const mensajeTarjeta = document.getElementById("mensajeTarjeta");
     let graficas = [];
     try {
-        const [datos, catalogo] = await Promise.all([solicitarApi("/api/auth/me"), solicitarApi("/api/paises")]);
+        const datos = await solicitarApi("/api/auth/me");
         const usuario = datos.usuario;
-        catalogo.paises.forEach((pais) => selectorPais.add(new Option(pais.nombre, pais.nombre)));
         document.getElementById("perfilNombre").value = usuario.nombre;
         document.getElementById("perfilCorreo").value = usuario.correo;
         document.getElementById("perfilTelefono").value = usuario.telefono;
-        selectorPais.value = usuario.nacionalidad;
+        ingresoRecurrente.checked = usuario.ingreso_recurrente !== false;
     } catch (error) {
         mensaje.textContent = "No se pudo cargar el perfil.";
     }
@@ -26,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 body: JSON.stringify({
                     nombre: document.getElementById("perfilNombre").value,
                     telefono: document.getElementById("perfilTelefono").value,
-                    nacionalidad: document.getElementById("perfilNacionalidad").value
+                    ingresoRecurrente: ingresoRecurrente.checked
                 })
             });
             mensaje.textContent = "Cambios guardados correctamente.";
