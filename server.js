@@ -363,6 +363,58 @@ async function handleApi(request, response, pathname) {
         return sendJson(response, 200, { metas });
     }
 
+    if (request.method === "GET" && pathname === "/api/deudas") {
+        const user = await requireUser(request, response);
+        if (!user) return;
+        const deudas = await database.all(`
+            SELECT id, nombre, saldo_inicial, saldo_pendiente, cuota, fecha_inicio,
+                   frecuencia, dias_recordatorio, activa
+            FROM deudas WHERE usuario_id = ? ORDER BY activa DESC, fecha_inicio
+        `, [user.id]);
+        return sendJson(response, 200, { deudas });
+    }
+
+    if (request.method === "POST" && pathname === "/api/deudas") {
+        const user = await requireUser(request, response);
+        if (!user) return;
+        const body = await readJson(request);
+        const nombre = String(body.nombre || "").trim();
+        const saldo = Number(body.saldoInicial);
+        const cuota = Number(body.cuota);
+        const frecuencia = String(body.frecuencia || "");
+        const fecha = String(body.fechaInicio || "");
+        const diasRecordatorio = Number(body.diasRecordatorio ?? 3);
+        if (!nombre || nombre.length > 120 || !Number.isFinite(saldo) || saldo <= 0 ||
+            !Number.isFinite(cuota) || cuota <= 0 || cuota > saldo ||
+            !["semanal", "quincenal", "mensual"].includes(frecuencia) ||
+            !/^\d{4}-\d{2}-\d{2}$/.test(fecha) || !Number.isInteger(diasRecordatorio) ||
+            diasRecordatorio < 0 || diasRecordatorio > 30) {
+            return sendJson(response, 400, { error: "Los datos de la deuda no son válidos." });
+        }
+        const result = await database.run(`
+            INSERT INTO deudas (usuario_id, nombre, saldo_inicial, saldo_pendiente, cuota, fecha_inicio, frecuencia, dias_recordatorio)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id
+        `, [user.id, nombre, saldo, saldo, cuota, fecha, frecuencia, diasRecordatorio]);
+        return sendJson(response, 201, { id: result.recordset[0].id });
+    }
+
+    const abonoMatch = pathname.match(/^\/api\/deudas\/(\d+)\/abonos$/);
+    if (request.method === "POST" && abonoMatch) {
+        const user = await requireUser(request, response);
+        if (!user) return;
+        const deudaId = Number(abonoMatch[1]);
+        const body = await readJson(request);
+        const monto = Number(body.monto);
+        const deuda = await database.get("SELECT saldo_pendiente FROM deudas WHERE id = ? AND usuario_id = ? AND activa = TRUE", [deudaId, user.id]);
+        if (!deuda || !Number.isFinite(monto) || monto <= 0 || monto > Number(deuda.saldo_pendiente)) {
+            return sendJson(response, 400, { error: "El abono no es válido." });
+        }
+        await database.run("INSERT INTO abonos_deuda (deuda_id, usuario_id, monto, fecha, nota) VALUES (?, ?, ?, ?, ?)", [deudaId, user.id, monto, new Date().toISOString().slice(0, 10), String(body.nota || "").trim() || null]);
+        const saldo = Number(deuda.saldo_pendiente) - monto;
+        await database.run("UPDATE deudas SET saldo_pendiente = ?, activa = ? WHERE id = ?", [saldo, saldo > 0, deudaId]);
+        return sendJson(response, 200, { correcto: true, saldoPendiente: saldo });
+    }
+
     if (request.method === "GET" && pathname === "/api/tarjetas-control") {
         const user = await requireUser(request, response);
         if (!user) return;

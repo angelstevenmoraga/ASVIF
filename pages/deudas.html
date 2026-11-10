@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/css/index.css">
+    <link rel="stylesheet" href="../assets/css/deudas.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <title>Deudas y recordatorios | ASVIF</title>
+</head>
+<body class="pagina-protegida pagina-dashboard" data-protegida="true">
+    <main class="deudas-contenido">
+        <a class="volver-panel" href="panel.html"><i class="fa-solid fa-arrow-left"></i> Volver al panel</a>
+        <header class="deudas-encabezado"><p class="etiqueta">CONTROL DE DEUDAS</p><h1>Que ninguna cuota se te pase</h1><p>Registra fechas, cuotas y abonos para mantener tu plan bajo control.</p></header>
+        <form id="form-deuda" class="deuda-form">
+            <label>Nombre de la deuda<input id="deuda-nombre" maxlength="120" placeholder="Tarjeta, préstamo o crédito" required></label>
+            <label>Saldo total<input id="deuda-saldo" type="number" min="0.01" step="0.01" required></label>
+            <label>Cuota obligatoria<input id="deuda-cuota" type="number" min="0.01" step="0.01" required></label>
+            <label>Primera fecha de pago<input id="deuda-fecha" type="date" required></label>
+            <label>Frecuencia<select id="deuda-frecuencia" required><option value="semanal">Semanal</option><option value="quincenal">Quincenal</option><option value="mensual" selected>Mensual</option></select></label>
+            <label>Recordar con anticipación<select id="deuda-recordatorio"><option value="0">Solo el día</option><option value="3" selected>3 días antes y el día</option><option value="7">7 días antes y el día</option></select></label>
+            <button type="submit">Guardar deuda</button><p id="mensaje-deuda" role="status"></p>
+        </form>
+        <section><h2>Mis deudas</h2><div id="lista-deudas" class="lista-deudas"><p>Cargando...</p></div></section>
+    </main>
+    <script src="../assets/js/auth.js"></script><script src="../assets/js/deudas.js"></script>
+</body>
+</html>

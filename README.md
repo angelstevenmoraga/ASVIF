@@ -34,6 +34,8 @@ Al iniciar, la aplicación crea las tablas necesarias en PostgreSQL, incluido el
 
 Después de iniciar sesión, las cuentas nuevas deben completar profesión, moneda y salario mensual. Esa moneda se usa como referencia en el panel y el equivalente en USD se consulta mediante el servicio público de tipos de cambio de ExchangeRate-API.
 
+El módulo de deudas permite registrar cuotas semanales, quincenales o mensuales, mostrar recordatorios antes y el día del vencimiento, y registrar abonos parciales hasta liquidar cada deuda.
+
 La recuperación de contraseña requiere configurar un proveedor de correo mediante SMTP o Resend. Sin esa configuración, la aplicación no envía enlaces y devuelve un error explícito.
 
 Ejecuta:
