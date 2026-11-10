@@ -12,6 +12,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("perfilNombre").value = usuario.nombre;
         document.getElementById("perfilCorreo").value = usuario.correo;
         document.getElementById("perfilTelefono").value = usuario.telefono;
+        document.getElementById("perfilProfesion").value = usuario.profesion || "No registrada";
+        document.getElementById("perfilMoneda").value = usuario.moneda_local || "No registrada";
+        const moneda = usuario.moneda_local || "USD";
+        document.getElementById("perfilSalario").value = usuario.salario_local
+            ? new Intl.NumberFormat("es", { style: "currency", currency: moneda }).format(Number(usuario.salario_local))
+            : "No registrado";
+        document.getElementById("perfilSalarioUsd").value = usuario.salario_usd
+            ? `$${Number(usuario.salario_usd).toFixed(2)} USD`
+            : "No registrado";
         ingresoRecurrente.checked = usuario.ingreso_recurrente !== false;
     } catch (error) {
         mensaje.textContent = "No se pudo cargar el perfil.";
@@ -47,7 +56,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const movimientos = movimientosData.movimientos;
         const ingresos = movimientos.filter((item) => item.tipo === "ingreso").reduce((total, item) => total + Number(item.monto), 0);
         const gastos = movimientos.filter((item) => item.tipo === "gasto").reduce((total, item) => total + Number(item.monto), 0);
-        const dinero = new Intl.NumberFormat("es-NI", { style: "currency", currency: "NIO" });
+        const datosPerfil = await solicitarApi("/api/auth/me").catch(() => ({ usuario: {} }));
+        const dinero = new Intl.NumberFormat("es", {
+            style: "currency",
+            currency: datosPerfil.usuario.moneda_local || "USD"
+        });
         document.getElementById("controlIngresos").textContent = dinero.format(ingresos);
         document.getElementById("controlGastos").textContent = dinero.format(gastos);
         document.getElementById("controlSaldo").textContent = dinero.format(ingresos - gastos);
