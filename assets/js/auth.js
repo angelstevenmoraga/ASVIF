@@ -60,9 +60,9 @@ async function iniciarSesion(usuario, password) {
             body: JSON.stringify({ usuario, password })
         });
         sessionStorage.setItem(ASVIF_AUTH_KEY, JSON.stringify(datos.usuario));
-        return true;
+        return datos.usuario;
     } catch (error) {
-        return false;
+        return null;
     }
 }
 

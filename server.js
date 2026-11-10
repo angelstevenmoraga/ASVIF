@@ -9,6 +9,12 @@ const PORT = Number(process.env.PORT) || 3000;
 const ROOT = __dirname;
 const scrypt = promisify(crypto.scrypt);
 const sessions = new Map();
+const CURRENCY_BY_PREFIX = {
+    "+1": "USD", "+7": "USD", "+52": "MXN", "+54": "ARS", "+55": "BRL", "+56": "CLP",
+    "+57": "COP", "+58": "VES", "+591": "BOB", "+595": "PYG", "+598": "UYU",
+    "+501": "BZD", "+502": "GTQ", "+503": "USD", "+504": "HNL", "+505": "NIO",
+    "+506": "CRC", "+507": "PAB", "+51": "PEN", "+53": "CUP", "+593": "USD"
+};
 function normalizeUsernameBase(name) {
     return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
 }
@@ -82,7 +88,8 @@ async function getCurrentUser(request) {
     const token = readCookie(request, "asvif_session");
     if (!token) return null;
     const session = await database.get(`
-        SELECT usuarios.id, usuarios.nombre, usuarios.usuario, usuarios.correo, usuarios.telefono, usuarios.nacionalidad
+        SELECT usuarios.id, usuarios.nombre, usuarios.usuario, usuarios.correo, usuarios.telefono, usuarios.nacionalidad,
+               usuarios.profesion, usuarios.salario_local, usuarios.moneda_local, usuarios.salario_usd
         FROM sesiones JOIN usuarios ON usuarios.id = sesiones.usuario_id
         WHERE sesiones.token_hash = ? AND sesiones.expira_en > NOW()
     `, [hashToken(token)]);
@@ -145,7 +152,42 @@ async function handleApi(request, response, pathname) {
             return sendJson(response, 401, { error: "Usuario o contraseña incorrectos." });
         }
         await setSession(response, user.id);
-        return sendJson(response, 200, { usuario: { nombre: user.nombre, usuario: user.usuario, correo: user.correo } });
+        return sendJson(response, 200, {
+            usuario: {
+                nombre: user.nombre, usuario: user.usuario, correo: user.correo,
+                perfilCompleto: user.usuario === "admin" || Boolean(user.profesion && user.salario_local && user.moneda_local)
+            }
+        });
+    }
+
+    if (request.method === "PUT" && pathname === "/api/auth/onboarding") {
+        const user = await requireUser(request, response);
+        if (!user) return;
+        const body = await readJson(request);
+        const profesion = String(body.profesion || "").trim();
+        const salario = Number(body.salario);
+        const prefijo = String(user.telefono || "").trim().split(/\s+/)[0];
+        const moneda = CURRENCY_BY_PREFIX[prefijo];
+        if (!/^[\p{L}\p{N}][\p{L}\p{N}\s&.'-]{1,119}$/u.test(profesion) || !moneda ||
+            !Number.isFinite(salario) || salario <= 0 || salario > 100000000000) {
+            return sendJson(response, 400, { error: "Completa una profesión válida y un salario mayor que cero." });
+        }
+        let tasa;
+        try {
+            const tasaResponse = await fetch(`https://open.er-api.com/v6/latest/${moneda}`);
+            const tasas = await tasaResponse.json();
+            tasa = Number(tasas?.rates?.USD);
+            if (!tasaResponse.ok || !Number.isFinite(tasa) || tasa <= 0) throw new Error("Tipo de cambio no disponible.");
+        } catch (error) {
+            console.error("No se pudo consultar el tipo de cambio:", error);
+            return sendJson(response, 503, { error: "No se pudo consultar el tipo de cambio. Inténtalo nuevamente." });
+        }
+        const salarioUsd = Math.round(salario * tasa * 100) / 100;
+        await database.run(
+            "UPDATE usuarios SET profesion = ?, salario_local = ?, moneda_local = ?, salario_usd = ? WHERE id = ?",
+            [profesion, salario, moneda, salarioUsd, user.id]
+        );
+        return sendJson(response, 200, { correcto: true, moneda, salarioLocal: salario, salarioUsd });
     }
 
     if (request.method === "POST" && pathname === "/api/auth/recovery/request") {
@@ -196,7 +238,13 @@ async function handleApi(request, response, pathname) {
 
     if (request.method === "GET" && pathname === "/api/auth/me") {
         const user = await requireUser(request, response);
-        return user ? sendJson(response, 200, { usuario: user }) : undefined;
+        if (!user) return;
+        return sendJson(response, 200, {
+            usuario: {
+                ...user,
+                perfilCompleto: user.usuario === "admin" || Boolean(user.profesion && user.salario_local && user.moneda_local)
+            }
+        });
     }
 
     if (request.method === "PUT" && pathname === "/api/auth/profile") {
@@ -380,10 +428,10 @@ async function ensureDefaultUser() {
     const usuarioDemo = await database.get("SELECT id FROM usuarios WHERE LOWER(usuario) = LOWER(?)", ["admin"]);
     if (usuarioDemo) return;
     await database.run(`
-        INSERT INTO usuarios (nombre, usuario, correo, telefono, nacionalidad, password_hash)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO usuarios (nombre, usuario, correo, telefono, nacionalidad, profesion, salario_local, moneda_local, salario_usd, password_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         RETURNING id
-    `, ["Administrador", "admin", "admin@asvif.local", "00000000", "Nicaragua", await hashPassword("asvif123")]);
+    `, ["Administrador", "admin", "admin@asvif.local", "00000000", "Nicaragua", "Administrador", 0, "USD", 0, await hashPassword("asvif123")]);
 }
 
 database.init()

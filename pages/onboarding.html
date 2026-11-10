@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/css/index.css">
+    <title>Configura tu perfil | ASVIF</title>
+</head>
+<body>
+    <main class="auth-contenedor">
+        <section class="tarjeta-auth">
+            <div class="logo-auth">
+                <img src="../assets/img/asvif_Logotipo.png" alt="Logotipo de ASVIF">
+                <h2>Completa tu perfil financiero</h2>
+            </div>
+            <p>Antes de entrar al panel necesitamos conocer tu profesión y tu salario.</p>
+            <form id="form-onboarding" class="form-box activo">
+                <div class="campo">
+                    <label for="profesion">Profesión</label>
+                    <input id="profesion" type="text" maxlength="120" autocomplete="organization-title" required>
+                </div>
+                <div class="campo">
+                    <label for="salario">Salario mensual</label>
+                    <input id="salario" type="number" min="0.01" step="0.01" required>
+                    <small id="moneda-ayuda">La moneda se determinará por tu prefijo telefónico.</small>
+                </div>
+                <button type="submit" class="btn-submit">Guardar y entrar</button>
+                <p id="mensaje-onboarding" role="status"></p>
+            </form>
+        </section>
+    </main>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/onboarding.js"></script>
+</body>
+</html>

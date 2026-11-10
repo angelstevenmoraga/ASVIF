@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
     if (typeof haySesion === "function" && haySesion()) {
-        window.location.replace("panel.html");
+        window.location.replace(obtenerSesion().perfilCompleto === false ? "onboarding.html" : "panel.html");
         return;
     }
 
@@ -131,14 +131,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         const usuario = document.getElementById("login-usuario").value;
         const password = document.getElementById("login-password").value;
 
-        if (!(await iniciarSesion(usuario, password))) {
+        const usuarioSesion = await iniciarSesion(usuario, password);
+        if (!usuarioSesion) {
             mostrarErrorAcceso();
             return;
         }
 
         mostrarAvisoRegistro("Inicio de sesión correcto", "Has iniciado sesión correctamente. Ya puedes entrar a tu panel.", true, "ACCESO CONFIRMADO");
         modalAviso.querySelector(".modal-aviso-accion").addEventListener("click", () => {
-            window.location.href = "panel.html";
+            window.location.href = usuarioSesion.perfilCompleto ? "panel.html" : "onboarding.html";
         }, { once: true });
     });
 

@@ -18,6 +18,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             solicitarApi("/api/auth/me"),
             solicitarApi("/api/dashboard/summary")
         ]);
+        if (!perfil.usuario.perfilCompleto) {
+            window.location.replace("onboarding.html");
+            return;
+        }
         if (bienvenida) bienvenida.textContent = `Hola, ${perfil.usuario.nombre}. Revisa tu panorama financiero.`;
         elementos.ingresos.textContent = formatoMoneda.format(resumen.ingresos);
         elementos.gastos.textContent = formatoMoneda.format(resumen.gastos);
