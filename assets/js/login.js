@@ -49,43 +49,42 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
         const datos = await solicitarApi("/api/paises");
         const prefijos = {
-            Argentina: ["54", "AR"], Bolivia: ["591", "BO"], Brasil: ["55", "BR"], Canadá: ["1", "CA"],
-            Chile: ["56", "CL"], Colombia: ["57", "CO"], "Costa Rica": ["506", "CR"], Cuba: ["53", "CU"],
-            Ecuador: ["593", "EC"], "El Salvador": ["503", "SV"], "Estados Unidos": ["1", "US"],
-            Guatemala: ["502", "GT"], Honduras: ["504", "HN"], México: ["52", "MX"],
-            Nicaragua: ["505", "NI"], Panamá: ["507", "PA"], Paraguay: ["595", "PY"], Perú: ["51", "PE"],
-            "Puerto Rico": ["1", "PR"], "República Dominicana": ["1", "DO"], Uruguay: ["598", "UY"],
-            Venezuela: ["58", "VE"]
+            Argentina: ["54", "argentina"], Bolivia: ["591", "bolivia"], Brasil: ["55", "brasil"],
+            Canadá: ["1", "canada"], Chile: ["56", "chile"], Colombia: ["57", "colombia"],
+            "Costa Rica": ["506", "costa-rica"], Cuba: ["53", "cuba"], Ecuador: ["593", "ecuador"],
+            "El Salvador": ["503", "el-salvador"], "Estados Unidos": ["1", "estados-unidos"],
+            Guatemala: ["502", "guatemala"], Honduras: ["504", "honduras"], México: ["52", "mexico"],
+            Nicaragua: ["505", "nicaragua"], Panamá: ["507", "panama"], Paraguay: ["595", "paraguay"],
+            Perú: ["51", "peru"], "Puerto Rico": ["1", "puerto-rico"],
+            "República Dominicana": ["1", "republica-dominicana"], Uruguay: ["598", "uruguay"],
+            Venezuela: ["58", "venezuela"], Belice: ["501", "belice"], Jamaica: ["1", "jamaica"]
         };
-        const bandera = (iso) => [...iso]
-            .map((letra) => String.fromCodePoint(127397 + letra.charCodeAt(0)))
-            .join("");
         datos.paises.forEach((pais) => {
             selectorPais.add(new Option(pais.nombre, pais.nombre));
             const prefijo = prefijos[pais.nombre];
             if (!prefijo) return;
-            const [codigo, iso] = prefijo;
+            const [codigo, archivo] = prefijo;
             const opcion = document.createElement("button");
             opcion.type = "button";
             opcion.className = "prefijo-opcion";
             opcion.setAttribute("role", "option");
             opcion.dataset.valor = `+${codigo}`;
-            opcion.dataset.iso = iso.toLowerCase();
+            opcion.dataset.archivo = archivo;
             opcion.dataset.etiqueta = `${pais.nombre} (+${codigo})`;
-            opcion.innerHTML = `<span class="prefijo-bandera" aria-hidden="true">${bandera(iso)}</span> <span>${pais.nombre} (+${codigo})</span>`;
+            opcion.innerHTML = `<img class="prefijo-bandera" src="../assets/img/countries/${archivo}.png" alt=""> <span>${pais.nombre} (+${codigo})</span>`;
             opcion.addEventListener("click", () => seleccionarPrefijo(opcion));
             selectorPrefijoOpciones.append(opcion);
         });
         selectorPais.addEventListener("change", () => {
             const prefijo = prefijos[selectorPais.value];
             if (prefijo) {
-                const opcion = [...selectorPrefijoOpciones.children].find((item) => item.dataset.valor === `+${prefijo[0]}` && item.dataset.iso === prefijo[1].toLowerCase());
+                const opcion = [...selectorPrefijoOpciones.children].find((item) => item.dataset.archivo === prefijo[1]);
                 if (opcion) seleccionarPrefijo(opcion);
             }
         });
         function seleccionarPrefijo(opcion) {
             selectorPrefijo.value = opcion.dataset.valor;
-            selectorPrefijoSeleccion.innerHTML = `<span class="prefijo-bandera" aria-hidden="true">${bandera(opcion.dataset.iso.toUpperCase())}</span> <span>${opcion.dataset.etiqueta}</span>`;
+            selectorPrefijoSeleccion.innerHTML = `<img class="prefijo-bandera" src="../assets/img/countries/${opcion.dataset.archivo}.png" alt=""> <span>${opcion.dataset.etiqueta}</span>`;
             [...selectorPrefijoOpciones.children].forEach((item) => item.setAttribute("aria-selected", String(item === opcion)));
             selectorPrefijoOpciones.classList.remove("abierto");
             selectorPrefijoBoton.setAttribute("aria-expanded", "false");

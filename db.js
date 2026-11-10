@@ -81,7 +81,7 @@ const database = {
                 nombre VARCHAR(80) NOT NULL UNIQUE
             );
         `);
-        const paises = ["Argentina", "Bolivia", "Brasil", "Canadá", "Chile", "Colombia", "Costa Rica", "Cuba", "Ecuador", "El Salvador", "España", "Estados Unidos", "Guatemala", "Honduras", "México", "Nicaragua", "Panamá", "Paraguay", "Perú", "Puerto Rico", "República Dominicana", "Uruguay", "Venezuela", "Alemania", "Australia", "China", "Corea del Sur", "Egipto", "Francia", "India", "Indonesia", "Italia", "Japón", "Marruecos", "Noruega", "Nueva Zelanda", "Países Bajos", "Portugal", "Reino Unido", "Rusia", "Sudáfrica", "Suecia", "Suiza", "Turquía"];
+        const paises = ["Argentina", "Belice", "Bolivia", "Brasil", "Canadá", "Chile", "Colombia", "Costa Rica", "Cuba", "Ecuador", "El Salvador", "Estados Unidos", "Guatemala", "Honduras", "Jamaica", "México", "Nicaragua", "Panamá", "Paraguay", "Perú", "Puerto Rico", "República Dominicana", "Uruguay", "Venezuela", "Alemania", "Australia", "China", "Corea del Sur", "Egipto", "España", "Francia", "India", "Indonesia", "Italia", "Japón", "Marruecos", "Noruega", "Nueva Zelanda", "Países Bajos", "Portugal", "Reino Unido", "Rusia", "Sudáfrica", "Suecia", "Suiza", "Turquía"];
         for (const pais of paises) {
             await query("INSERT INTO paises (nombre) VALUES (?) ON CONFLICT (nombre) DO NOTHING", [pais]);
         }
