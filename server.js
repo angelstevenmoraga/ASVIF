@@ -136,7 +136,11 @@ async function handleApi(request, response, pathname) {
 
     if (request.method === "POST" && pathname === "/api/auth/login") {
         const body = await readJson(request);
-        const user = await database.get("SELECT * FROM usuarios WHERE LOWER(usuario) = LOWER(?)", [String(body.usuario || "").trim()]);
+        const identificador = String(body.usuario || "").trim().toLowerCase();
+        const user = await database.get(
+            "SELECT * FROM usuarios WHERE LOWER(usuario) = ? OR LOWER(correo) = ?",
+            [identificador, identificador]
+        );
         if (!user || !(await verifyPassword(String(body.password || ""), user.password_hash))) {
             return sendJson(response, 401, { error: "Usuario o contraseña incorrectos." });
         }
