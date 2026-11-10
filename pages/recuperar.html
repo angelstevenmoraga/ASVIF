@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/login.css">
+    <title>Recuperar cuenta - ASVIF</title>
+</head>
+<body>
+    <main class="contenedor-auth">
+        <div class="tarjeta-auth">
+            <div class="logo-auth">
+                <img src="../assets/img/asvif_Logotipo.png" alt="Logotipo de ASVIF">
+                <h2>Recuperar cuenta</h2>
+            </div>
+            <form id="form-recuperacion" class="form-box activo">
+                <div class="campo">
+                    <label for="correo"><i class="fa-solid fa-envelope"></i> Correo electrónico</label>
+                    <input id="correo" type="email" autocomplete="email" required>
+                </div>
+                <button type="submit" class="btn-submit">Solicitar enlace</button>
+                <p id="mensaje" class="mensaje-formulario" role="alert"></p>
+            </form>
+            <a class="enlace-recuperacion" href="login.html">Volver a iniciar sesión</a>
+        </div>
+    </main>
+    <script>
+        const form = document.getElementById("form-recuperacion");
+        const mensaje = document.getElementById("mensaje");
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const response = await fetch("../api/auth/recovery/request", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ correo: document.getElementById("correo").value })
+            });
+            const data = await response.json();
+            mensaje.textContent = data.mensaje || data.error || "No se pudo procesar la solicitud.";
+        });
+    </script>
+</body>
+</html>

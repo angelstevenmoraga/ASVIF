@@ -32,6 +32,8 @@ export DATABASE_URL='postgresql://usuario:contraseña@host/base_de_datos?sslmode
 
 Al iniciar, la aplicación crea las tablas necesarias en PostgreSQL, incluido el catálogo `paises`, y agrega el usuario demo si no existe. No guardes `DATABASE_URL` en el repositorio.
 
+La recuperación de contraseña requiere configurar un proveedor de correo mediante SMTP o Resend. Sin esa configuración, la aplicación no envía enlaces y devuelve un error explícito.
+
 Ejecuta:
 
 ```bash

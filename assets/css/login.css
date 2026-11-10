@@ -57,6 +57,7 @@ main.contenedor-auth {
 
 .campo input:focus, .campo select:focus { outline: 3px solid rgba(47, 117, 104, .2); border-color: var(--verde); }
 .campo select { width: 100%; padding: 13px 14px; border: 1px solid var(--borde); border-radius: 12px; background: #fbfdfb; color: var(--texto); font-size: 1rem; }
+.region-ayuda { color: var(--texto-suave); font-size: .82rem; }
 .telefono-grupo { display: grid; grid-template-columns: minmax(150px, 42%) 1fr; gap: 8px; }
 .telefono-grupo select { min-width: 0; }
 .telefono-grupo input { min-width: 0; }

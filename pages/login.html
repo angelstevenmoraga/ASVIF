@@ -51,6 +51,7 @@
                 <p class="credenciales-demo">
                     Acceso rápido: <strong>admin</strong> / <strong>asvif123</strong>
                 </p>
+                <a class="enlace-recuperacion" href="recuperar.html"><i class="fa-solid fa-key"></i> Recuperar usuario o contraseña</a>
             </form>
 
             <!-- FORMULARIO DE REGISTRO -->
@@ -58,11 +59,6 @@
                 <div class="campo">
                     <label for="reg-nombre"><i class="fa-solid fa-user"></i> Nombre Completo</label>
                     <input type="text" id="reg-nombre" placeholder="Tu Nombre" minlength="2" maxlength="80" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s'-]{2,80}" required>
-                </div>
-
-                <div class="campo">
-                    <label for="reg-usuario"><i class="fa-solid fa-user"></i> Usuario</label>
-                    <input type="text" id="reg-usuario" placeholder="usuario" minlength="3" maxlength="30" pattern="[A-Za-z0-9_]{3,30}" autocomplete="username" required>
                 </div>
 
                 <div class="campo">
@@ -92,6 +88,14 @@
                     </select>
                 </div>
 
+                <div class="campo" id="campo-estado" hidden>
+                    <label for="reg-estado"><i class="fa-solid fa-map-location-dot"></i> Estado de México</label>
+                    <select id="reg-estado" autocomplete="address-level1">
+                        <option value="">Selecciona un estado</option>
+                    </select>
+                    <small id="reg-region" class="region-ayuda"></small>
+                </div>
+
                 <div class="campo">
                     <label for="reg-password"><i class="fa-solid fa-lock"></i> Contraseña</label>
                     <input type="password" id="reg-password" placeholder="Mínimo 8 caracteres" minlength="8" maxlength="72" autocomplete="new-password" required>
@@ -102,7 +106,7 @@
                     <input type="password" id="reg-confirm-password" placeholder="Repite tu contraseña" required>
                 </div>
 
-                <button type="submit" class="btn-submit">Registrarse</button>
+                        <button type="submit" class="btn-submit">Registrarse</button>
             </form>
         </div>
     </main>

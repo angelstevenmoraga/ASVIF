@@ -9,6 +9,34 @@ const PORT = Number(process.env.PORT) || 3000;
 const ROOT = __dirname;
 const scrypt = promisify(crypto.scrypt);
 const sessions = new Map();
+const MEXICO_STATES = {
+    "Aguascalientes": ["Centro", 4], "Baja California": ["Noroeste", 1], "Baja California Sur": ["Noroeste", 1],
+    "Campeche": ["Sureste", 5], "Chiapas": ["Sureste", 5], "Chihuahua": ["Noroeste", 1],
+    "Ciudad de México": ["Centro", 4], "Coahuila": ["Noreste", 2], "Colima": ["Occidente", 3],
+    "Durango": ["Noroeste", 1], "Guanajuato": ["Centro", 4], "Guerrero": ["Centro", 4],
+    "Hidalgo": ["Centro", 4], "Jalisco": ["Occidente", 3], "México": ["Centro", 4],
+    "Michoacán": ["Occidente", 3], "Morelos": ["Centro", 4], "Nayarit": ["Occidente", 3],
+    "Nuevo León": ["Noreste", 2], "Oaxaca": ["Sureste", 5], "Puebla": ["Centro", 4],
+    "Querétaro": ["Centro", 4], "Quintana Roo": ["Sureste", 5], "San Luis Potosí": ["Noreste", 2],
+    "Sinaloa": ["Noroeste", 1], "Sonora": ["Noroeste", 1], "Tabasco": ["Sureste", 5],
+    "Tamaulipas": ["Noreste", 2], "Tlaxcala": ["Centro", 4], "Veracruz": ["Sureste", 5],
+    "Yucatán": ["Sureste", 5], "Zacatecas": ["Noroeste", 1]
+};
+
+function normalizeUsernameBase(name) {
+    return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+async function generateUsername(name) {
+    const base = normalizeUsernameBase(name).slice(0, 27);
+    if (base.length < 3) throw new Error("El nombre no permite generar un usuario válido.");
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+        const suffix = crypto.randomInt(100, 1000).toString();
+        const usuario = `${base}${suffix}`;
+        if (!await database.get("SELECT id FROM usuarios WHERE usuario = ?", [usuario])) return usuario;
+    }
+    throw new Error("No fue posible generar un usuario disponible.");
+}
 
 function sendJson(response, status, body) {
     response.writeHead(status, { "Content-Type": "application/json; charset=utf-8" });
@@ -89,15 +117,12 @@ async function handleApi(request, response, pathname) {
 
     if (request.method === "POST" && pathname === "/api/auth/register") {
         const body = await readJson(request);
-        const fields = ["nombre", "usuario", "correo", "telefono", "nacionalidad", "password"];
+        const fields = ["nombre", "correo", "telefono", "nacionalidad", "password"];
         if (fields.some((field) => typeof body[field] !== "string" || !body[field].trim())) {
             return sendJson(response, 400, { error: "Todos los campos son obligatorios." });
         }
         if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s'-]{2,80}$/.test(body.nombre.trim())) {
             return sendJson(response, 400, { error: "El nombre solo puede contener letras y espacios." });
-        }
-        if (!/^[A-Za-z0-9_]{3,30}$/.test(body.usuario.trim())) {
-            return sendJson(response, 400, { error: "El usuario debe tener entre 3 y 30 caracteres: letras, números o guion bajo." });
         }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(body.correo.trim())) {
             return sendJson(response, 400, { error: "Escribe un correo electrónico válido." });
@@ -107,17 +132,23 @@ async function handleApi(request, response, pathname) {
         }
         const pais = await database.get("SELECT id FROM paises WHERE nombre = ?", [body.nacionalidad.trim()]);
         if (!pais) return sendJson(response, 400, { error: "Selecciona un país válido de la lista." });
+        const estado = body.nacionalidad.trim() === "México" ? String(body.estado || "").trim() : null;
+        if (body.nacionalidad.trim() === "México" && !MEXICO_STATES[estado]) {
+            return sendJson(response, 400, { error: "Selecciona un estado válido de México." });
+        }
+        const [region, regionNumero] = estado ? MEXICO_STATES[estado] : [null, null];
         if (body.password.length < 8 || body.password.length > 72 || !/[A-Za-z]/.test(body.password) || !/\d/.test(body.password)) {
             return sendJson(response, 400, { error: "La contraseña debe tener 8-72 caracteres, una letra y un número." });
         }
         try {
             const passwordHash = await hashPassword(body.password);
+            const usuario = await generateUsername(body.nombre.trim());
             const result = await database.run(`
-                INSERT INTO usuarios (nombre, usuario, correo, telefono, nacionalidad, password_hash)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO usuarios (nombre, usuario, correo, telefono, nacionalidad, estado, region, region_numero, password_hash)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 RETURNING id
-            `, [body.nombre.trim(), body.usuario.trim(), body.correo.trim().toLowerCase(), body.telefono.trim(), body.nacionalidad.trim(), passwordHash]);
-            return sendJson(response, 201, { id: result.recordset[0].id, mensaje: "Cuenta creada." });
+            `, [body.nombre.trim(), usuario, body.correo.trim().toLowerCase(), body.telefono.trim(), body.nacionalidad.trim(), estado, region, regionNumero, passwordHash]);
+            return sendJson(response, 201, { id: result.recordset[0].id, usuario, mensaje: "Cuenta creada." });
         } catch (error) {
             if (String(error.message).includes("UNIQUE")) return sendJson(response, 409, { error: "El usuario o correo ya está registrado." });
             throw error;
@@ -132,6 +163,45 @@ async function handleApi(request, response, pathname) {
         }
         await setSession(response, user.id);
         return sendJson(response, 200, { usuario: { nombre: user.nombre, usuario: user.usuario, correo: user.correo } });
+    }
+
+    if (request.method === "POST" && pathname === "/api/auth/recovery/request") {
+        const body = await readJson(request);
+        const correo = String(body.correo || "").trim().toLowerCase();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo)) {
+            return sendJson(response, 400, { error: "Escribe un correo electrónico válido." });
+        }
+        const user = await database.get("SELECT id FROM usuarios WHERE LOWER(correo) = ?", [correo]);
+        if (user) {
+            const rawToken = crypto.randomBytes(32).toString("hex");
+            await database.run("DELETE FROM tokens_recuperacion WHERE usuario_id = ?", [user.id]);
+            await database.run(
+                "INSERT INTO tokens_recuperacion (token_hash, usuario_id, expira_en) VALUES (?, ?, ?)",
+                [hashToken(rawToken), user.id, new Date(Date.now() + 15 * 60 * 1000).toISOString()]
+            );
+        }
+        if (!process.env.SMTP_HOST && !process.env.RESEND_API_KEY) {
+            return sendJson(response, 503, { error: "La recuperación está preparada, pero el envío de correo aún no está configurado." });
+        }
+        return sendJson(response, 200, { mensaje: "Si el correo está registrado, recibirás instrucciones." });
+    }
+
+    if (request.method === "POST" && pathname === "/api/auth/recovery/reset") {
+        const body = await readJson(request);
+        const token = String(body.token || "");
+        const password = String(body.password || "");
+        if (!/^[a-f0-9]{64}$/.test(token) || password.length < 8 || password.length > 72 ||
+            !/[A-Za-z]/.test(password) || !/\d/.test(password)) {
+            return sendJson(response, 400, { error: "El token o la contraseña no son válidos." });
+        }
+        const recovery = await database.get(
+            "SELECT usuario_id FROM tokens_recuperacion WHERE token_hash = ? AND expira_en > NOW() AND intentos < 5",
+            [hashToken(token)]
+        );
+        if (!recovery) return sendJson(response, 400, { error: "El enlace no es válido o ya expiró." });
+        await database.run("UPDATE usuarios SET password_hash = ? WHERE id = ?", [await hashPassword(password), recovery.usuario_id]);
+        await database.run("DELETE FROM tokens_recuperacion WHERE token_hash = ?", [hashToken(token)]);
+        return sendJson(response, 200, { mensaje: "Contraseña actualizada." });
     }
 
     if (request.method === "POST" && pathname === "/api/auth/logout") {

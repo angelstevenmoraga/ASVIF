@@ -10,6 +10,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const formRegistro = document.getElementById("form-registro");
     const botonDemo = document.getElementById("btn-demo");
     const selectorPais = document.getElementById("reg-nacionalidad");
+    const campoEstado = document.getElementById("campo-estado");
+    const selectorEstado = document.getElementById("reg-estado");
+    const regionAyuda = document.getElementById("reg-region");
     const selectorPrefijo = document.getElementById("reg-prefijo");
     const selectorPrefijoBoton = document.getElementById("reg-prefijo-boton");
     const selectorPrefijoSeleccion = document.getElementById("reg-prefijo-seleccion");
@@ -48,6 +51,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
         const datos = await solicitarApi("/api/paises");
+        const estadosMexico = {
+            "Aguascalientes": ["Centro", 4], "Baja California": ["Noroeste", 1], "Baja California Sur": ["Noroeste", 1],
+            "Campeche": ["Sureste", 5], "Chiapas": ["Sureste", 5], "Chihuahua": ["Noroeste", 1],
+            "Ciudad de México": ["Centro", 4], "Coahuila": ["Noreste", 2], "Colima": ["Occidente", 3],
+            "Durango": ["Noroeste", 1], "Guanajuato": ["Centro", 4], "Guerrero": ["Centro", 4],
+            "Hidalgo": ["Centro", 4], "Jalisco": ["Occidente", 3], "México": ["Centro", 4],
+            "Michoacán": ["Occidente", 3], "Morelos": ["Centro", 4], "Nayarit": ["Occidente", 3],
+            "Nuevo León": ["Noreste", 2], "Oaxaca": ["Sureste", 5], "Puebla": ["Centro", 4],
+            "Querétaro": ["Centro", 4], "Quintana Roo": ["Sureste", 5], "San Luis Potosí": ["Noreste", 2],
+            "Sinaloa": ["Noroeste", 1], "Sonora": ["Noroeste", 1], "Tabasco": ["Sureste", 5],
+            "Tamaulipas": ["Noreste", 2], "Tlaxcala": ["Centro", 4], "Veracruz": ["Sureste", 5],
+            "Yucatán": ["Sureste", 5], "Zacatecas": ["Noroeste", 1]
+        };
+        Object.keys(estadosMexico).forEach((estado) => selectorEstado.add(new Option(estado, estado)));
         const prefijos = {
             Argentina: ["54", "argentina"], Bolivia: ["591", "bolivia"], Brasil: ["55", "brasil"],
             Canadá: ["1", "canada"], Chile: ["56", "chile"], Colombia: ["57", "colombia"],
@@ -77,10 +94,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
         selectorPais.addEventListener("change", () => {
             const prefijo = prefijos[selectorPais.value];
+            const esMexico = selectorPais.value === "México";
+            campoEstado.hidden = !esMexico;
+            selectorEstado.required = esMexico;
+            if (!esMexico) {
+                selectorEstado.value = "";
+                regionAyuda.textContent = "";
+            }
             if (prefijo) {
                 const opcion = [...selectorPrefijoOpciones.children].find((item) => item.dataset.archivo === prefijo[1]);
                 if (opcion) seleccionarPrefijo(opcion);
             }
+        });
+        selectorEstado.addEventListener("change", () => {
+            const region = estadosMexico[selectorEstado.value];
+            regionAyuda.textContent = region ? `Región ${region[1]} · ${region[0]}` : "";
         });
         function seleccionarPrefijo(opcion) {
             selectorPrefijo.value = opcion.dataset.valor;
@@ -167,12 +195,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     formRegistro.addEventListener("submit", async (e) => {
         e.preventDefault();
         const nombre = document.getElementById("reg-nombre").value;
-        const usuario = document.getElementById("reg-usuario").value;
         const correo = document.getElementById("reg-correo").value;
         const numeroTelefono = document.getElementById("reg-telefono").value.trim();
         const prefijo = selectorPrefijo.value;
         const telefono = `${prefijo} ${numeroTelefono}`;
         const nacionalidad = document.getElementById("reg-nacionalidad").value;
+        const estado = document.getElementById("reg-estado").value;
         const password = document.getElementById("reg-password").value;
         const confirmPassword = document.getElementById("reg-confirm-password").value;
 
@@ -196,13 +224,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        const resultado = await registrarUsuario(nombre, usuario, correo, telefono, nacionalidad, password);
+        const resultado = await registrarUsuario(nombre, correo, telefono, nacionalidad, estado, password);
         if (!resultado.correcto) {
             mostrarAvisoRegistro("No se pudo crear la cuenta", resultado.mensaje || "Comprueba los datos e inténtalo de nuevo.");
             return;
         }
 
-        mostrarAvisoRegistro("Registro exitoso", "Tu cuenta fue creada. Ya puedes iniciar sesión.", true);
+        mostrarAvisoRegistro("Registro exitoso", `Tu cuenta fue creada. Tu usuario es ${resultado.usuario}.`, true);
         formRegistro.reset();
         modalAviso.querySelector(".modal-aviso-accion").addEventListener("click", () => tabLogin.click(), { once: true });
     });
