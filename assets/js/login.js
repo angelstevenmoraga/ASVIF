@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const formLogin = document.getElementById("form-login");
     const formRegistro = document.getElementById("form-registro");
     const botonDemo = document.getElementById("btn-demo");
-    const selectorPais = document.getElementById("reg-nacionalidad");
     const selectorPrefijo = document.getElementById("reg-prefijo");
     const selectorPrefijoBoton = document.getElementById("reg-prefijo-boton");
     const selectorPrefijoSeleccion = document.getElementById("reg-prefijo-seleccion");
@@ -47,7 +46,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     try {
-        const datos = await solicitarApi("/api/paises");
         const prefijos = {
             Argentina: ["54", "argentina"], Bolivia: ["591", "bolivia"], Brasil: ["55", "brasil"],
             Canadá: ["1", "canada"], Chile: ["56", "chile"], Colombia: ["57", "colombia"],
@@ -59,9 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             "República Dominicana": ["1", "republica-dominicana"], Uruguay: ["598", "uruguay"],
             Venezuela: ["58", "venezuela"], Belice: ["501", "belice"], Jamaica: ["1", "jamaica"]
         };
-        datos.paises.forEach((pais) => {
-            selectorPais.add(new Option(pais.nombre, pais.nombre));
-            const prefijo = prefijos[pais.nombre];
+        Object.entries(prefijos).forEach(([nombrePais, prefijo]) => {
             if (!prefijo) return;
             const [codigo, archivo] = prefijo;
             const opcion = document.createElement("button");
@@ -70,17 +66,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             opcion.setAttribute("role", "option");
             opcion.dataset.valor = `+${codigo}`;
             opcion.dataset.archivo = archivo;
-            opcion.dataset.etiqueta = `${pais.nombre} (+${codigo})`;
-            opcion.innerHTML = `<img class="prefijo-bandera" src="../assets/img/countries/${archivo}.png" alt=""> <span>${pais.nombre} (+${codigo})</span>`;
+            opcion.dataset.etiqueta = `${nombrePais} (+${codigo})`;
+            opcion.innerHTML = `<img class="prefijo-bandera" src="../assets/img/countries/${archivo}.png" alt=""> <span>${nombrePais} (+${codigo})</span>`;
             opcion.addEventListener("click", () => seleccionarPrefijo(opcion));
             selectorPrefijoOpciones.append(opcion);
-        });
-        selectorPais.addEventListener("change", () => {
-            const prefijo = prefijos[selectorPais.value];
-            if (prefijo) {
-                const opcion = [...selectorPrefijoOpciones.children].find((item) => item.dataset.archivo === prefijo[1]);
-                if (opcion) seleccionarPrefijo(opcion);
-            }
         });
         function seleccionarPrefijo(opcion) {
             selectorPrefijo.value = opcion.dataset.valor;
@@ -100,9 +89,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         });
     } catch (error) {
-        selectorPais.disabled = true;
         selectorPrefijoBoton.disabled = true;
-        selectorPais.options[0].textContent = "No se pudo cargar la lista";
     }
 
     modalError.querySelector(".modal-error-cerrar").addEventListener("click", cerrarModalError);
@@ -171,7 +158,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         const numeroTelefono = document.getElementById("reg-telefono").value.trim();
         const prefijo = selectorPrefijo.value;
         const telefono = `${prefijo} ${numeroTelefono}`;
-        const nacionalidad = document.getElementById("reg-nacionalidad").value;
         const password = document.getElementById("reg-password").value;
         const confirmPassword = document.getElementById("reg-confirm-password").value;
 
@@ -195,7 +181,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        const resultado = await registrarUsuario(nombre, correo, telefono, nacionalidad, password);
+        const resultado = await registrarUsuario(nombre, correo, telefono, password);
         if (!resultado.correcto) {
             mostrarAvisoRegistro("No se pudo crear la cuenta", resultado.mensaje || "Comprueba los datos e inténtalo de nuevo.");
             return;

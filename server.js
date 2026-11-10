@@ -103,7 +103,7 @@ async function handleApi(request, response, pathname) {
 
     if (request.method === "POST" && pathname === "/api/auth/register") {
         const body = await readJson(request);
-        const fields = ["nombre", "correo", "telefono", "nacionalidad", "password"];
+        const fields = ["nombre", "correo", "telefono", "password"];
         if (fields.some((field) => typeof body[field] !== "string" || !body[field].trim())) {
             return sendJson(response, 400, { error: "Todos los campos son obligatorios." });
         }
@@ -116,8 +116,6 @@ async function handleApi(request, response, pathname) {
         if (!/^[+]?[0-9][0-9\s().-]{6,19}$/.test(body.telefono.trim())) {
             return sendJson(response, 400, { error: "El número de teléfono no es válido." });
         }
-        const pais = await database.get("SELECT id FROM paises WHERE nombre = ?", [body.nacionalidad.trim()]);
-        if (!pais) return sendJson(response, 400, { error: "Selecciona un país válido de la lista." });
         if (body.password.length < 8 || body.password.length > 72 || !/[A-Za-z]/.test(body.password) || !/\d/.test(body.password)) {
             return sendJson(response, 400, { error: "La contraseña debe tener 8-72 caracteres, una letra y un número." });
         }
@@ -125,10 +123,10 @@ async function handleApi(request, response, pathname) {
             const passwordHash = await hashPassword(body.password);
             const usuario = await generateUsername(body.nombre.trim());
             const result = await database.run(`
-                INSERT INTO usuarios (nombre, usuario, correo, telefono, nacionalidad, password_hash)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO usuarios (nombre, usuario, correo, telefono, password_hash)
+                VALUES (?, ?, ?, ?, ?)
                 RETURNING id
-            `, [body.nombre.trim(), usuario, body.correo.trim().toLowerCase(), body.telefono.trim(), body.nacionalidad.trim(), passwordHash]);
+            `, [body.nombre.trim(), usuario, body.correo.trim().toLowerCase(), body.telefono.trim(), passwordHash]);
             return sendJson(response, 201, { id: result.recordset[0].id, usuario, mensaje: "Cuenta creada." });
         } catch (error) {
             if (String(error.message).includes("UNIQUE")) return sendJson(response, 409, { error: "El usuario o correo ya está registrado." });

@@ -74,11 +74,11 @@ function iniciarSesionDemo() {
     }));
 }
 
-async function registrarUsuario(nombre, correo, telefono, nacionalidad, password) {
+async function registrarUsuario(nombre, correo, telefono, password) {
     try {
         const datos = await solicitarApi("/api/auth/register", {
             method: "POST",
-            body: JSON.stringify({ nombre, correo, telefono, nacionalidad, password })
+            body: JSON.stringify({ nombre, correo, telefono, password })
         });
         return { correcto: true, ...datos };
     } catch (error) {
