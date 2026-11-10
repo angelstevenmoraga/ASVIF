@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const mensaje = document.getElementById("mensaje-onboarding");
     try {
         const datos = await solicitarApi("/api/auth/me");
-        if (datos.usuario.usuario === "admin" || (datos.usuario.profesion && datos.usuario.salario_local)) {
+        if (datos.usuario.usuario === "admin" || datos.usuario.perfilCompleto) {
             window.location.href = "panel.html";
             return;
         }
@@ -25,7 +25,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 method: "PUT",
                 body: JSON.stringify({
                     profesion: document.getElementById("profesion").value,
-                    salario: document.getElementById("salario").value
+                    salario: document.getElementById("salario").value,
+                    moneda: document.getElementById("moneda").value
                 })
             });
             const sesion = obtenerSesion();

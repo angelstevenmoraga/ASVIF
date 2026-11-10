@@ -5,9 +5,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         gastos: document.querySelector("[data-resumen-gastos]"),
         saldo: document.querySelector("[data-resumen-saldo]"),
         movimientos: document.querySelector("[data-resumen-movimientos]"),
-        metas: document.querySelector("[data-resumen-metas]")
+        metas: document.querySelector("[data-resumen-metas]"),
+        salario: document.querySelector("[data-resumen-salario]"),
+        salarioUsd: document.querySelector("[data-resumen-salario-usd]")
     };
-    const formatoMoneda = new Intl.NumberFormat("es-NI", {
+    let formatoMoneda = new Intl.NumberFormat("es-NI", {
         style: "currency",
         currency: "NIO",
         minimumFractionDigits: 2
@@ -22,6 +24,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             window.location.replace("onboarding.html");
             return;
         }
+        const moneda = perfil.usuario.moneda_local || "NIO";
+        formatoMoneda = new Intl.NumberFormat("es", { style: "currency", currency: moneda });
+        elementos.salario.textContent = formatoMoneda.format(Number(perfil.usuario.salario_local));
+        elementos.salarioUsd.textContent = `≈ $${Number(perfil.usuario.salario_usd).toFixed(2)} USD`;
         if (bienvenida) bienvenida.textContent = `Hola, ${perfil.usuario.nombre}. Revisa tu panorama financiero.`;
         elementos.ingresos.textContent = formatoMoneda.format(resumen.ingresos);
         elementos.gastos.textContent = formatoMoneda.format(resumen.gastos);
