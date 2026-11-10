@@ -161,6 +161,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         const password = document.getElementById("reg-password").value;
         const confirmPassword = document.getElementById("reg-confirm-password").value;
 
+        if (!prefijo) {
+            mostrarAvisoRegistro("Selecciona un prefijo", "Elige el prefijo internacional de tu número telefónico.");
+            selectorPrefijoBoton.focus();
+            return;
+        }
+
         const campos = [...formRegistro.querySelectorAll("input, select")];
         const campoInvalido = campos.find((campo) => !campo.checkValidity());
         if (campoInvalido) {
